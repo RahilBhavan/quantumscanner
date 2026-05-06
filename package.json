@@ -19,7 +19,9 @@
     "singleQuote": true,
     "tabWidth": 2,
     "trailingComma": "es5",
-    "plugins": ["prettier-plugin-tailwindcss"]
+    "plugins": [
+      "prettier-plugin-tailwindcss"
+    ]
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
@@ -55,6 +57,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6.0.1",
+    "@vitejs/plugin-react-oxc": "^0.4.3",
     "@vitest/coverage-v8": "^4.1.5",
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
@@ -66,6 +69,7 @@
     "prettier-plugin-tailwindcss": "^0.8.0",
     "tailwindcss": "^4",
     "typescript": "^5",
+    "vite": "^8.0.10",
     "vitest": "^4.1.5"
   }
 }

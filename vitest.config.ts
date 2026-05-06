@@ -8,6 +8,14 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./test/setup.ts'],
+    deps: {
+      optimizer: {
+        client: {
+          enabled: true,
+          include: ['react', 'react-dom', '@testing-library/react', '@testing-library/user-event'],
+        },
+      },
+    },
     coverage: {
       provider: 'v8',
       thresholds: {
@@ -22,5 +30,6 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
+    dedupe: ['react', 'react-dom'],
   },
 })
