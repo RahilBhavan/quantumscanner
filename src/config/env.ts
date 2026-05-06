@@ -16,9 +16,6 @@ import { z } from 'zod'
  *                          but risk upstream rate limits.
  *
  * **Client-exposed variables** (`NEXT_PUBLIC_` prefix, bundled into the client):
- * - `NEXT_PUBLIC_LIVE_COUNTER_ENABLED` — Feature flag for the animated scan
- *   counter on the landing page. Accepts `'true'` or `'false'`; transformed to
- *   a boolean so callers don't need to compare strings.
  * - `NEXT_PUBLIC_CANONICAL_URL` — The production URL of the site, used for
  *   Open Graph tags and sitemap generation.
  */
@@ -30,10 +27,6 @@ const envSchema = z.object({
     .url()
     .default('https://api.coingecko.com/api/v3'),
   BULK_CONCURRENCY: z.coerce.number().int().min(1).max(20).default(6),
-  NEXT_PUBLIC_LIVE_COUNTER_ENABLED: z
-    .enum(['true', 'false'])
-    .default('false')
-    .transform((v) => v === 'true'),
   NEXT_PUBLIC_CANONICAL_URL: z.string().url().default('http://localhost:3000'),
 })
 

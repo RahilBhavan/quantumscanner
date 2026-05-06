@@ -4,8 +4,6 @@ import { GitFork } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
 import { BaggageTag } from '@/components/ui/BaggageTag'
-import { LiveCounter } from '@/components/marketing/LiveCounter'
-import { readCounters, type ScanCounters } from '@/lib/kv/counters'
 import { env } from '@/config/env'
 import { GITHUB_URL } from '@/config/site'
 
@@ -20,14 +18,6 @@ export const metadata: Metadata = {
     url: env.NEXT_PUBLIC_CANONICAL_URL,
     type: 'website',
   },
-}
-
-export const revalidate = 30
-
-async function getCounters(): Promise<ScanCounters> {
-  if (!env.NEXT_PUBLIC_LIVE_COUNTER_ENABLED)
-    return { totalScanned: 0, exposedCount: 0 }
-  return readCounters()
 }
 
 const EXPLAINER_TAGS = [
@@ -61,22 +51,16 @@ const EXPLAINER_TAGS = [
  * ### Sections
  * 1. **Hero** — headline `BaggageTag` with CTAs to `/scan` and `/portfolio`,
  *    and a GitHub open-source link sourced from `GITHUB_URL`.
- * 2. **Departure Board** — animated `LiveCounter` showing aggregate scan
- *    totals pulled from Vercel KV. Only rendered when
- *    `NEXT_PUBLIC_LIVE_COUNTER_ENABLED` is `true` and `getCounters()` returns
- *    data.
- * 3. **How It Works** — three `BaggageTag` explainer panels covering the
+ * 2. **How It Works** — three `BaggageTag` explainer panels covering the
  *    quantum threat, address coverage, and risk scoring methodology.
- * 4. **Bottom CTA** — repeat call-to-action linking to `/scan`, `/portfolio`,
+ * 3. **Bottom CTA** — repeat call-to-action linking to `/scan`, `/portfolio`,
  *    and `/methodology`.
  *
  * @remarks
  * Open Graph metadata is set at module level via the exported `metadata`
  * object. The canonical URL is sourced from `env.NEXT_PUBLIC_CANONICAL_URL`.
  */
-export default async function HomePage() {
-  const counters = await getCounters()
-
+export default function HomePage() {
   return (
     <main className="bg-parchment">
       {/* Hero */}
@@ -125,16 +109,6 @@ export default async function HomePage() {
               </a>
             </div>
           </BaggageTag>
-        </div>
-      </section>
-
-      {/* Live counter — Departure Board */}
-      <section className="bg-aged perforation py-10">
-        <div className="container mx-auto max-w-2xl px-4">
-          <h2 className="font-stamp text-ink-faint mb-6 text-center text-sm tracking-[0.25em]">
-            Departure Board
-          </h2>
-          <LiveCounter counters={counters} />
         </div>
       </section>
 
