@@ -8,6 +8,7 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./test/setup.ts'],
+    exclude: ['**/node_modules/**', '**/tests/e2e/**'],
     deps: {
       optimizer: {
         client: {
@@ -18,6 +19,18 @@ export default defineConfig({
     },
     coverage: {
       provider: 'v8',
+      exclude: [
+        'src/components/ui/**',        // shadcn/ui boilerplate, not application logic
+        'src/app/**/page.tsx',         // RSC server pages — not runnable in jsdom
+        'src/app/**/layout.tsx',
+        'src/app/**/loading.tsx',
+        'src/app/**/error.tsx',
+        'src/app/sitemap.ts',
+        'src/app/robots.ts',
+        'test/**',
+        '**/*.d.ts',
+        '**/*.config.*',
+      ],
       thresholds: {
         lines: 80,
         branches: 80,

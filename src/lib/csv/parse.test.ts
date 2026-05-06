@@ -79,4 +79,35 @@ describe('parseCsv', () => {
     const result = await parseCsv(makeFile(csv))
     expect(result.rows[0].address).toBe('1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa')
   })
+
+  it('extracts address from CSV using "addr" column header', async () => {
+    const csv = 'label,addr\nGenesis,1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa\n'
+    const result = await parseCsv(makeFile(csv))
+    expect(result.rows[0].address).toBe('1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa')
+  })
+
+  it('extracts address from CSV using "btc_address" column header', async () => {
+    const csv = 'btc_address,label\n1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa,Genesis\n'
+    const result = await parseCsv(makeFile(csv))
+    expect(result.rows[0].address).toBe('1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa')
+  })
+
+  it('falls back to first column when no recognized address column name found', async () => {
+    const csv = 'wallet,notes\n1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa,my cold wallet\n'
+    const result = await parseCsv(makeFile(csv))
+    expect(result.rows[0].address).toBe('1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa')
+  })
+
+  it('extracts address from CSV using "bitcoin_address" column header', async () => {
+    const csv = 'bitcoin_address\n1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa\n'
+    const result = await parseCsv(makeFile(csv))
+    expect(result.rows[0].address).toBe('1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa')
+  })
+
+  it('returns zero rows for header-only CSV', async () => {
+    const csv = 'address\n'
+    const result = await parseCsv(makeFile(csv))
+    expect(result.rows).toHaveLength(0)
+    expect(result.errors).toHaveLength(0)
+  })
 })

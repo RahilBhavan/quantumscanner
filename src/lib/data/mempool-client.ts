@@ -28,7 +28,7 @@ export async function fetchAddressFacts(
 ): Promise<FetchedAddressFacts> {
   let response: Response
   try {
-    response = await fetchWithTimeout(`${baseUrl}/address/${address}`)
+    response = await fetchWithTimeout(`${baseUrl}/address/${encodeURIComponent(address)}`)
   } catch (err) {
     throw new UpstreamError(`Network error fetching ${address}: ${err}`)
   }
