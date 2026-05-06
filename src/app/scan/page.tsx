@@ -1,6 +1,10 @@
 import { ScanForm } from '@/components/scan/ScanForm'
 import { LimitationsFooter } from '@/components/shared/LimitationsFooter'
 
+// searchParams vary per request — opt out of static generation so
+// shareable /scan?address=... links pre-populate correctly.
+export const dynamic = 'force-dynamic'
+
 export const metadata = {
   title: 'Scan Address — Bitcoin Quantum Exposure Scanner',
   description:
