@@ -12,13 +12,28 @@ import {
 } from 'recharts'
 import { TAG_COLORS } from '@/components/ui/BaggageTag'
 
+/** Props for {@link ExposureChart}. */
 interface ExposureChartProps {
+  /** Count of addresses classified as SAFE_AT_REST. */
   safe: number
+  /** Count of addresses classified as EXPOSED. */
   exposed: number
+  /** Count of addresses classified as EMPTY. */
   empty: number
+  /** Count of addresses that could not be resolved. */
   unresolvable: number
 }
 
+/**
+ * Horizontal stacked bar chart visualising the breakdown of address
+ * classifications across the scanned portfolio.
+ *
+ * Uses Recharts with a single "Portfolio" data point so the four
+ * classification counts appear as stacked segments on one horizontal bar.
+ * Fill colours are sourced from {@link TAG_COLORS} to stay consistent with
+ * the baggage-tag design system. Typography inside the chart (ticks, tooltip,
+ * legend) uses the project's Courier Prime font variable.
+ */
 export function ExposureChart({
   safe,
   exposed,

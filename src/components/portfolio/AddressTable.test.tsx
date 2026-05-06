@@ -8,19 +8,18 @@ import type { AddressResult } from '@/lib/api/resolve-address'
 function makeResult(overrides: Partial<AddressResult> = {}): AddressResult {
   return {
     address: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
-    type: 'P2PKH',
-    classification: 'SAFE_AT_REST',
+    type: 'P2PKH' as const,
+    classification: 'SAFE_AT_REST' as const,
     pubkeyExposed: false,
     firstSeen: '2009-01-03',
     lastSpend: null,
     balanceBtc: 50,
     balanceUsd: 3_400_000,
     riskScore: { conservative: 4, base: 11, aggressive: 28 },
-    recommendedAction: 'NO_ACTION_NEEDED',
+    recommendedAction: 'NO_ACTION_NEEDED' as const,
     dataSource: 'mempool.space',
     flags: [],
     notes: [],
-    methodologyUrl: 'http://localhost/methodology',
     ...overrides,
   }
 }

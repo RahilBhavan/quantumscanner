@@ -20,6 +20,25 @@ import type { AddressResult } from '@/lib/api/resolve-address'
 
 const SATS_PER_BTC = 100_000_000
 
+/**
+ * The four phases of the portfolio scan lifecycle, used as the discriminant
+ * field in `PortfolioState`. Transitions follow this directed path:
+ *
+ * ```
+ * upload ──(FILE_PARSED)──▶ preview ──(SCAN_START)──▶ scanning ──(SCAN_DONE)──▶ results
+ *   ▲                          │                           │                        │
+ *   └──────────────────────────┴───────────(RESET)─────────┴────────────────────────┘
+ * ```
+ *
+ * - `upload`   — Initial state. `CsvDropzone` is shown; no file loaded.
+ * - `preview`  — CSV has been parsed and validated. `CsvPreviewTable` and
+ *                "Scan N addresses" CTA are shown.
+ * - `scanning` — SSE stream is open. `ScanProgressBar` and partial results
+ *                accumulate in real time.
+ * - `results`  — All addresses resolved (or stream ended). Full dashboard
+ *                (`SummaryBar`, `ExposureChart`, `CrqcScenarioPanel`,
+ *                `RecommendedActionsSummary`, `AddressTable`) is shown.
+ */
 type Phase = 'upload' | 'preview' | 'scanning' | 'results'
 
 interface PortfolioState {
@@ -32,6 +51,19 @@ interface PortfolioState {
   error: string | null
 }
 
+/**
+ * Discriminated union of every action the `reducer` accepts.
+ *
+ * | Action | Trigger | Phase transition |
+ * |--------|---------|-----------------|
+ * | `FILE_PARSED` | `handleFile` after CSV parse + validate | → `preview` |
+ * | `SCAN_START` | "Scan N addresses" button click | → `scanning` |
+ * | `SCAN_RESULT` | Each `result` SSE event | (stays `scanning`) |
+ * | `SCAN_PROGRESS` | Each `progress` SSE event | (stays `scanning`) |
+ * | `SCAN_DONE` | `onDone` SSE callback | → `results` |
+ * | `SCAN_ERROR` | `onError` SSE callback or `error` event | → `results` |
+ * | `RESET` | "Change file" or "Start over" buttons | → `upload` |
+ */
 type Action =
   | {
       type: 'FILE_PARSED'
@@ -98,6 +130,19 @@ function reducer(state: PortfolioState, action: Action): PortfolioState {
   }
 }
 
+/**
+ * Derives aggregate portfolio statistics from the current set of resolved
+ * address results. Called on every render during `scanning` and `results`
+ * phases so the dashboard stays live as new SSE events arrive.
+ *
+ * @param results - The `AddressResult` objects accumulated so far.
+ * @returns An object containing:
+ *   - `exposed`, `safe`, `empty`, `unresolvable` — per-classification counts.
+ *   - `exposedBtc`, `totalBtc` — BTC totals across exposed and all addresses.
+ *   - `actionCounts` — per-`recommendedAction` counts for the
+ *     `RecommendedActionsSummary` component.
+ *   - `riskScore` — three-scenario `CrqcRiskScore` computed by `computeRiskScore`.
+ */
 function computeSummary(results: AddressResult[]) {
   const counts = { exposed: 0, safe: 0, empty: 0, unresolvable: 0 }
   const actionCounts = {
@@ -131,6 +176,44 @@ function computeSummary(results: AddressResult[]) {
   return { ...counts, exposedBtc, totalBtc, actionCounts, riskScore }
 }
 
+/**
+ * PortfolioClient — interactive state machine orchestrating the full portfolio
+ * scan workflow. This is a `"use client"` component; all server interactions
+ * are via the SSE stream at `POST /api/v1/portfolio/stream`.
+ *
+ * ### Phase-state machine
+ *
+ * State is managed by a `useReducer` with `PortfolioState` and the `Action`
+ * discriminated union. See the `Phase` type for the full transition diagram.
+ *
+ * #### `upload` phase
+ * Renders `CsvDropzone`. When a file is dropped or selected, `handleFile`
+ * parses it with `parseCsv` (Papa Parse wrapper), validates rows with
+ * `validateCsvRows`, and dispatches `FILE_PARSED`.
+ *
+ * #### `preview` phase
+ * Renders `CsvPreviewTable` showing valid / duplicate / invalid row counts.
+ * "Change file" dispatches `RESET`. "Scan N addresses" dispatches `SCAN_START`
+ * and calls `handleScan`.
+ *
+ * #### `scanning` phase
+ * `handleScan` opens the SSE stream via `streamPortfolioScan`, filtering out
+ * duplicate and invalid rows before submission. Incoming `result` events
+ * dispatch `SCAN_RESULT`; `progress` events dispatch `SCAN_PROGRESS`;
+ * `error` events dispatch `SCAN_ERROR`. `ScanProgressBar` and partial results
+ * dashboard are visible while scanning is in progress.
+ *
+ * #### `results` phase
+ * The full dashboard is shown: `SummaryBar`, `ExposureChart`,
+ * `CrqcScenarioPanel`, `RecommendedActionsSummary`, and `AddressTable`.
+ * Any stream-level error is displayed as an alert banner. "Start over"
+ * dispatches `RESET`.
+ *
+ * @remarks
+ * `computeSummary` is called on every render in `scanning` and `results`
+ * phases — it is a pure derivation from `scanResults` and is intentionally
+ * not memoised to keep the dashboard live during streaming.
+ */
 export function PortfolioClient() {
   const [state, dispatch] = useReducer(reducer, INITIAL)
 
@@ -198,7 +281,7 @@ export function PortfolioClient() {
         <section aria-label="CSV preview" className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="font-semibold">{fileName}</h2>
+              <h2 className="font-stamp text-ink-dark text-lg">{fileName}</h2>
               <p className="text-muted-foreground text-sm">
                 {validCount} valid addresses ·{' '}
                 {validatedRows.filter((r) => r.isDuplicate).length} duplicates ·{' '}

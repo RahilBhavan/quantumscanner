@@ -1,4 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import type {
+  ClassificationFlag,
+  ClassificationNote,
+} from '@/lib/classification/types'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { renderAsync } from '../../../test/render'
@@ -40,7 +44,7 @@ const VALID_ROW = {
 
 const MOCK_RESULT = {
   address: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
-  type: 'P2PKH',
+  type: 'P2PKH' as const,
   classification: 'SAFE_AT_REST' as const,
   pubkeyExposed: false,
   firstSeen: '2009-01-03',
@@ -48,11 +52,10 @@ const MOCK_RESULT = {
   balanceBtc: 50,
   balanceUsd: 3_400_000,
   riskScore: { conservative: 4, base: 11, aggressive: 28 },
-  recommendedAction: 'MONITOR',
+  recommendedAction: 'MONITOR' as const,
   dataSource: 'mempool.space',
-  flags: [],
-  notes: [],
-  methodologyUrl: 'http://localhost/methodology',
+  flags: [] as ClassificationFlag[],
+  notes: [] as ClassificationNote[],
 }
 
 function makeFile(name = 'portfolio.csv') {

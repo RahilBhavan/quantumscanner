@@ -10,13 +10,51 @@ import { env } from '@/config/env'
 
 export const runtime = 'nodejs'
 
+/**
+ * GET /api/v1/address/[address]
+ *
+ * Resolves a single mainnet Bitcoin address and returns its quantum exposure
+ * classification, on-chain balance, transaction history metadata, and BTC/USD
+ * value — all wrapped in the standard API envelope.
+ *
+ * @param request - The incoming Next.js request. The client IP is extracted
+ *   from the `x-forwarded-for` or `x-real-ip` headers for rate-limit keying.
+ * @param params.address - The Bitcoin address to scan, passed as a dynamic
+ *   path segment (e.g. `1A1zP1eP5QGefi2DMPTfTL5SLmv7Divf`).
+ *
+ * @returns
+ *   - **200 OK** `{ ok: true, data: AddressResult }` — successful scan result
+ *     containing `classification`, `balanceBtc`, `balanceUsd`, `txCount`,
+ *     `pubkeyExposed`, `recommendedAction`, and optional `riskFlags`.
+ *   - **400 Bad Request** `{ ok: false, code: 'INVALID_ADDRESS' }` — the
+ *     address does not match any recognised mainnet Bitcoin format (P2PKH,
+ *     P2SH, P2WPKH, P2WSH, P2TR).
+ *   - **404 Not Found** `{ ok: false, code: 'NOT_FOUND' }` — the address is
+ *     syntactically valid but was not found on the blockchain (e.g. never used).
+ *   - **429 Too Many Requests** `{ ok: false, code: 'RATE_LIMITED' }` — the
+ *     caller has exceeded the `single` rate-limit bucket. Rate-limit state is
+ *     reflected in the `X-RateLimit-*` response headers.
+ *   - **502 Bad Gateway** `{ ok: false, code: 'UPSTREAM_ERROR' }` — mempool.space
+ *     and the Blockstream Esplora fallback both returned errors.
+ *   - **500 Internal Server Error** `{ ok: false, code: 'INTERNAL_ERROR' }` —
+ *     an unexpected error occurred server-side.
+ *
+ * @remarks
+ * Rate limiting uses the `single` bucket (one request per address per sliding
+ * window). Rate-limit headers (`X-RateLimit-Limit`, `X-RateLimit-Remaining`,
+ * `X-RateLimit-Reset`) are included on every response, including 429s.
+ *
+ * The BTC/USD price is fetched from CoinGecko and memoised in-process for
+ * 60 seconds, so it is shared across concurrent requests within the same
+ * serverless invocation lifetime.
+ */
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ address: string }> }
 ) {
   const { address } = await params
   const ip = getClientIp(request)
-  const rl = checkRateLimit(ip, 'single')
+  const rl = await checkRateLimit(ip, 'single')
   const headers = rateLimitHeaders(rl)
 
   if (!rl.allowed) {

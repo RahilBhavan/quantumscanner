@@ -3,10 +3,16 @@ import { RiskScoreToggle } from './RiskScoreToggle'
 import { HighReuseBadge } from './HighReuseBadge'
 import type { AddressResult } from '@/lib/api/resolve-address'
 
+/** Props for {@link SafeAtRestCard}. */
 interface Props {
+  /** The resolved scan result for the address being displayed. */
   result: AddressResult
 }
 
+/**
+ * Formats a BTC amount with 4–8 decimal places using the user's locale
+ * conventions for digit grouping.
+ */
 function formatBtc(btc: number) {
   return btc.toLocaleString(undefined, {
     minimumFractionDigits: 4,
@@ -14,6 +20,10 @@ function formatBtc(btc: number) {
   })
 }
 
+/**
+ * Formats a USD amount as a locale-aware currency string with no decimal
+ * places (whole dollars only).
+ */
 function formatUsd(usd: number) {
   return usd.toLocaleString(undefined, {
     style: 'currency',
@@ -22,8 +32,21 @@ function formatUsd(usd: number) {
   })
 }
 
+/**
+ * Result card shown when an address is classified as SAFE_AT_REST.
+ *
+ * Explains to the user that their public key has never appeared on-chain,
+ * so a quantum computer cannot extract the private key from the address
+ * alone. Displays the current BTC balance, optional USD equivalent, a
+ * high-reuse warning badge when applicable, a P2SH ambiguity notice when
+ * relevant, the three-scenario risk score toggle, and actionable next steps.
+ */
 export function SafeAtRestCard({ result }: Props) {
+  // HIGH_REUSE flag means the address has been used in 100+ transactions,
+  // which increases on-chain footprint and makes metadata correlation easier.
   const hasHighReuse = result.flags.includes('HIGH_REUSE')
+  // P2SH_AMBIGUOUS indicates the address wraps an unknown script type;
+  // multisig or non-standard scripts may have different exposure characteristics.
   const hasP2shNote = result.notes.includes('P2SH_AMBIGUOUS')
 
   return (

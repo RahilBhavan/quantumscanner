@@ -1,4 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import type {
+  ClassificationFlag,
+  ClassificationNote,
+} from '@/lib/classification/types'
 import { screen, waitFor, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { renderAsync } from '../../../test/render'
@@ -15,7 +19,7 @@ const mockScan = vi.mocked(scanAddress)
 
 const mockResult = {
   address: VALID_ADDRESS,
-  type: 'P2PKH',
+  type: 'P2PKH' as const,
   classification: 'SAFE_AT_REST' as const,
   pubkeyExposed: false,
   firstSeen: '2009-01-03',
@@ -23,11 +27,10 @@ const mockResult = {
   balanceBtc: 50,
   balanceUsd: 3400000,
   riskScore: { conservative: 4, base: 11, aggressive: 28 },
-  recommendedAction: 'MONITOR',
+  recommendedAction: 'MONITOR' as const,
   dataSource: 'mempool.space',
-  flags: [] as string[],
-  notes: [] as string[],
-  methodologyUrl: 'http://localhost:3000/methodology',
+  flags: [] as ClassificationFlag[],
+  notes: [] as ClassificationNote[],
 }
 
 describe('ScanForm', () => {

@@ -3,13 +3,35 @@
 import { Badge } from '@/components/ui/badge'
 import type { ValidatedRow } from '@/lib/csv/validate'
 
+/** Props for {@link CsvPreviewTable}. */
 interface CsvPreviewTableProps {
+  /**
+   * The full array of validated rows from the parsed CSV. Only the first
+   * {@link PREVIEW_COUNT} rows are rendered; the remainder are summarised
+   * in a footer row.
+   */
   rows: ValidatedRow[]
+  /**
+   * The total number of addresses in the CSV file, used to calculate how
+   * many rows are hidden from the preview.
+   */
   totalCount: number
 }
 
+/**
+ * Maximum number of CSV rows shown in the preview table.
+ * Additional rows are collapsed into a "+N more" footer line.
+ */
 const PREVIEW_COUNT = 5
 
+/**
+ * Read-only preview table shown after a CSV is parsed but before scanning begins.
+ *
+ * Displays the first five rows with their line number, truncated address,
+ * detected address type, and a validity/duplicate status badge. A footer line
+ * summarises how many additional addresses were not shown. This gives the user
+ * a chance to spot parsing errors or duplicates before committing to a full scan.
+ */
 export function CsvPreviewTable({ rows, totalCount }: CsvPreviewTableProps) {
   const preview = rows.slice(0, PREVIEW_COUNT)
   const remaining = totalCount - preview.length

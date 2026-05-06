@@ -1,10 +1,24 @@
 'use client'
 
+/** Props for {@link ScanProgressBar}. */
 interface ScanProgressBarProps {
+  /** Number of addresses whose scan API call has resolved (success or error). */
   completed: number
+  /** Total number of addresses submitted for scanning in the current batch. */
   total: number
 }
 
+/**
+ * Animated progress bar displayed while a portfolio batch scan is in flight.
+ *
+ * Renders a "conveyor belt" track styled with the vintage baggage-tag design
+ * system, overlaid with a chevron-pattern fill that advances proportionally as
+ * addresses complete. Percentage is rounded to the nearest whole number.
+ * The outer wrapper carries an `aria-label` summarising the raw counts for
+ * screen readers, while the inner fill element uses `role="progressbar"` with
+ * `aria-valuenow` / `aria-valuemin` / `aria-valuemax` for assistive technology
+ * compatibility.
+ */
 export function ScanProgressBar({ completed, total }: ScanProgressBarProps) {
   const pct = total > 0 ? Math.round((completed / total) * 100) : 0
 

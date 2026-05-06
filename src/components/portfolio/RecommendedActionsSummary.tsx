@@ -2,15 +2,30 @@
 
 import { AlertTriangle, Eye, CheckCircle, HelpCircle } from 'lucide-react'
 
+/** Props for {@link RecommendedActionsSummary}. */
 interface RecommendedActionsSummaryProps {
+  /**
+   * Count of addresses in each recommended-action bucket. A value of `0`
+   * causes that action's card to be omitted from the rendered output so
+   * only relevant actions are surfaced.
+   */
   counts: {
+    /** Addresses with exposed pubkeys and non-zero balance — highest urgency. */
     MIGRATE_IMMEDIATELY: number
+    /** Addresses with exposed pubkeys but zero or low balance — watch for incoming funds. */
     MONITOR: number
+    /** Addresses that are safe at rest — no quantum risk today. */
     NO_ACTION_NEEDED: number
+    /** Addresses that are ambiguous (P2SH) or unresolvable — requires manual verification. */
     MANUAL_REVIEW: number
   }
 }
 
+/**
+ * Static metadata for each recommended-action type: display label,
+ * description, icon, and border colour. The `key` field must match
+ * the `counts` prop keys so that each entry can look up its count.
+ */
 const ACTIONS = [
   {
     key: 'MIGRATE_IMMEDIATELY' as const,
@@ -46,6 +61,16 @@ const ACTIONS = [
   },
 ]
 
+/**
+ * Action-grouped summary panel shown at the bottom of the portfolio dashboard.
+ *
+ * Groups scanned addresses into four prioritised buckets and renders a card
+ * for each bucket that has at least one address. Cards with a count of zero
+ * are suppressed entirely, keeping the panel focused on what actually needs
+ * attention. Each card shows an icon, action label, address count, and a
+ * brief description of why addresses land in that bucket and what to do about
+ * them.
+ */
 export function RecommendedActionsSummary({
   counts,
 }: RecommendedActionsSummaryProps) {

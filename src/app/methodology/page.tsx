@@ -48,6 +48,36 @@ const RECOMMENDED_ACTIONS: {
 
 const SCENARIO_VARIANTS: TagVariant[] = ['empty', 'error', 'exposed']
 
+/**
+ * Methodology page — `/methodology`
+ *
+ * Statically rendered long-form documentation page explaining how the scanner
+ * classifies addresses, computes risk scores, and derives recommended actions.
+ * All content is hard-coded; no data fetching occurs at render time.
+ *
+ * ### Sections (table of contents)
+ * 1. **Overview** — explains the ECDSA/Schnorr vulnerability and Shor's
+ *    algorithm threat model.
+ * 2. **Address Classification** — maps Bitcoin address prefixes (P2PKH, P2SH,
+ *    P2WPKH, P2WSH, P2TR, P2PK) to their pubkey exposure behaviour.
+ * 3. **Pubkey Exposure Logic** — truth table mapping address type × transaction
+ *    history × balance to a `classification` and `recommendedAction`.
+ * 4. **Risk Score Formula** — documents the
+ *    `clamp(exposureRatio × 100 × weight × (1/yearsToMid)^0.5, 0, 100)` formula
+ *    and its risk bands (LOW / MODERATE / HIGH / CRITICAL).
+ * 5. **CRQC Timeline Scenarios** — displays the three scenarios
+ *    (Conservative / Base / Aggressive) sourced from `CRQC_SCENARIOS`.
+ * 6. **Recommended Actions** — explains `MIGRATE_IMMEDIATELY`, `MONITOR`,
+ *    `NO_ACTION_NEEDED`, and `MANUAL_REVIEW`.
+ * 7. **Data Sources & Privacy** — documents mempool.space + Blockstream Esplora
+ *    fallback, CoinGecko price feed, and the no-persistence privacy model.
+ *
+ * @remarks
+ * Scenario cards are rendered from the `CRQC_SCENARIOS` constant so the page
+ * automatically reflects any changes to scenario definitions. The methodology
+ * reference is Ray, Gautam & Ryan (2026); this tool is independent and not
+ * endorsed by the paper's authors.
+ */
 export default function MethodologyPage() {
   return (
     <main className="container mx-auto max-w-4xl px-4 py-12">

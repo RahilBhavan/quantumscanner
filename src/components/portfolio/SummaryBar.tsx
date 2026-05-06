@@ -1,22 +1,40 @@
 'use client'
 
+/** Props for {@link SummaryBar}. */
 interface SummaryBarProps {
+  /** Total number of addresses scanned in the portfolio. */
   total: number
+  /** Count of addresses classified as EXPOSED. */
   exposed: number
+  /** Count of addresses classified as SAFE_AT_REST. */
   safe: number
+  /** Count of addresses classified as EMPTY (zero balance). */
   empty: number
+  /** Count of addresses that could not be resolved. */
   unresolvable: number
+  /** Aggregate BTC balance held across EXPOSED addresses. */
   exposedBtc: number
+  /** Aggregate BTC balance held across all scanned addresses. */
   totalBtc: number
 }
 
+/** Props for the internal {@link StatBlock} display component. */
 interface StatBlockProps {
+  /** Short uppercase label rendered below the numeric value. */
   label: string
+  /** Pre-formatted number or string to display at large size. */
   value: number | string
+  /** Tailwind text-colour class for the value. Defaults to `text-ink-dark`. */
   ink?: string
+  /** Tailwind border-colour class for the card border. Defaults to `border-tag-edge`. */
   border?: string
 }
 
+/**
+ * Internal tile component for a single classification count.
+ * Each tile renders a large numeric value with a colour-coded label
+ * in the vintage baggage-tag style.
+ */
 function StatBlock({
   label,
   value,
@@ -35,6 +53,15 @@ function StatBlock({
   )
 }
 
+/**
+ * Dashboard summary strip displayed at the top of the portfolio results page.
+ *
+ * Shows five classification-count tiles (Total, Exposed, Safe at Rest, Empty,
+ * Unresolvable) and a proportional BTC exposure bar indicating what fraction
+ * of the portfolio's total balance sits in quantum-exposed addresses. Colour
+ * coding matches the baggage-tag design system so the visual severity is
+ * immediately apparent at a glance.
+ */
 export function SummaryBar({
   total,
   exposed,
@@ -44,6 +71,7 @@ export function SummaryBar({
   exposedBtc,
   totalBtc,
 }: SummaryBarProps) {
+  // Guard against division by zero when no addresses have a balance.
   const exposurePct =
     totalBtc > 0 ? ((exposedBtc / totalBtc) * 100).toFixed(1) : '0.0'
 

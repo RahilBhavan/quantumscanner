@@ -11,9 +11,58 @@ import { env } from '@/config/env'
 
 export const runtime = 'nodejs'
 
+/**
+ * POST /api/v1/portfolio
+ *
+ * Batch scan endpoint that resolves up to 1,000 Bitcoin addresses in a single
+ * request and returns aggregate portfolio exposure metrics alongside
+ * per-address results. The entire result set is returned once every address
+ * has been resolved. For incremental streaming results use
+ * `POST /api/v1/portfolio/stream`.
+ *
+ * @param request - Incoming Next.js request. Expects a JSON body conforming to
+ *   `PortfolioBodySchema`: `{ addresses: string[] }` where `addresses` is a
+ *   non-empty array of up to 1,000 mainnet Bitcoin address strings. The client
+ *   IP is extracted from forwarding headers for rate-limit keying.
+ *
+ * @returns
+ *   - **200 OK**
+ *     ```json
+ *     {
+ *       "ok": true,
+ *       "data": {
+ *         "summary": {
+ *           "totalAddresses": number,
+ *           "totalBtc": number,
+ *           "safeAtRestBtc": number,
+ *           "exposedBtc": number
+ *         },
+ *         "addresses": Array<AddressResult | { address: string; error: string }>
+ *       }
+ *     }
+ *     ```
+ *     Individual address failures are represented as inline error objects
+ *     rather than failing the whole request.
+ *   - **400 Bad Request** `{ ok: false, code: 'INVALID_BODY' }` — request body
+ *     is not valid JSON or fails schema validation.
+ *   - **400 Bad Request** `{ ok: false, code: 'INVALID_ADDRESSES' }` — one or
+ *     more addresses are not recognised mainnet Bitcoin addresses. The
+ *     `detail.invalid` field lists the offending values.
+ *   - **429 Too Many Requests** `{ ok: false, code: 'RATE_LIMITED' }` — the
+ *     caller has exceeded the `batch` rate-limit bucket.
+ *
+ * @remarks
+ * Addresses are resolved concurrently up to `BULK_CONCURRENCY` (env var,
+ * default 5) using `p-limit` to avoid saturating upstream APIs. All addresses
+ * are format-validated before any network I/O; a single invalid address fails
+ * the request immediately without consuming upstream quota.
+ *
+ * Rate-limit headers (`X-RateLimit-Limit`, `X-RateLimit-Remaining`,
+ * `X-RateLimit-Reset`) are present on every response.
+ */
 export async function POST(request: NextRequest) {
   const ip = getClientIp(request)
-  const rl = checkRateLimit(ip, 'batch')
+  const rl = await checkRateLimit(ip, 'batch')
   const headers = rateLimitHeaders(rl)
 
   if (!rl.allowed) {

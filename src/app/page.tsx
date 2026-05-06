@@ -7,6 +7,7 @@ import { BaggageTag } from '@/components/ui/BaggageTag'
 import { LiveCounter } from '@/components/marketing/LiveCounter'
 import { readCounters } from '@/lib/kv/counters'
 import { env } from '@/config/env'
+import { GITHUB_URL } from '@/config/site'
 
 export const metadata: Metadata = {
   title: 'Bitcoin Quantum Exposure Scanner',
@@ -49,6 +50,29 @@ const EXPLAINER_TAGS = [
   },
 ]
 
+/**
+ * Homepage — `/`
+ *
+ * Marketing landing page for the Bitcoin Quantum Exposure Scanner. Rendered
+ * as a Next.js Async Server Component and ISR-revalidated every 30 seconds so
+ * the live counter stays fresh without sacrificing static delivery.
+ *
+ * ### Sections
+ * 1. **Hero** — headline `BaggageTag` with CTAs to `/scan` and `/portfolio`,
+ *    and a GitHub open-source link sourced from `GITHUB_URL`.
+ * 2. **Departure Board** — animated `LiveCounter` showing aggregate scan
+ *    totals pulled from Vercel KV. Only rendered when
+ *    `NEXT_PUBLIC_LIVE_COUNTER_ENABLED` is `true` and `getCounters()` returns
+ *    data.
+ * 3. **How It Works** — three `BaggageTag` explainer panels covering the
+ *    quantum threat, address coverage, and risk scoring methodology.
+ * 4. **Bottom CTA** — repeat call-to-action linking to `/scan`, `/portfolio`,
+ *    and `/methodology`.
+ *
+ * @remarks
+ * Open Graph metadata is set at module level via the exported `metadata`
+ * object. The canonical URL is sourced from `env.NEXT_PUBLIC_CANONICAL_URL`.
+ */
 export default async function HomePage() {
   const counters = await getCounters()
 
@@ -90,7 +114,7 @@ export default async function HomePage() {
             </div>
             <div className="mt-4">
               <a
-                href="https://github.com/rahil1206/quantum-scanner"
+                href={GITHUB_URL}
                 className="font-form text-ink-faint hover:text-ink-mid inline-flex items-center gap-1.5 text-xs transition-colors"
                 target="_blank"
                 rel="noopener noreferrer"

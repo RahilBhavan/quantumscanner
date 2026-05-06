@@ -7,6 +7,24 @@ export const metadata = {
     'Check if your Bitcoin address is vulnerable to a quantum computer. Free, open-source, no data stored.',
 }
 
+/**
+ * Scan page — `/scan`
+ *
+ * Statically rendered shell page that hosts the `ScanForm` client component.
+ * The page itself performs no data fetching; all blockchain I/O is triggered
+ * client-side through `ScanForm` calling `GET /api/v1/address/[address]`.
+ *
+ * ### Layout
+ * - Heading and subtitle introducing the single-address scan workflow.
+ * - `ScanForm` — controlled input + submit, renders result cards inline
+ *   (`ExposedCard`, `SafeAtRestCard`, `EmptyCard`, `UnresolvableCard`).
+ * - `LimitationsFooter` — disclaimer about P2SH ambiguity and data sources.
+ *
+ * @remarks
+ * Static metadata is exported for SEO. The `loading.tsx` sibling provides a
+ * skeleton placeholder and `error.tsx` provides the error boundary, both
+ * handled automatically by the Next.js App Router.
+ */
 export default function ScanPage() {
   return (
     <main className="mx-auto max-w-2xl px-4 py-12">

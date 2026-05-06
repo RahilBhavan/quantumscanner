@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server'
 import pLimit from 'p-limit'
 import { detectAddressType } from '@/lib/classification/detect-type'
 import { resolveAddress } from '@/lib/api/resolve-address'
+import type { AddressResult } from '@/lib/api/resolve-address'
 import { fetchBtcPrice } from '@/lib/data/price-client'
 import { checkRateLimit, rateLimitHeaders } from '@/lib/api/rate-limit'
 import { getClientIp } from '@/lib/api/ip'
@@ -12,13 +13,67 @@ import { NextResponse } from 'next/server'
 
 export const runtime = 'nodejs'
 
+/** Union of a successful address resolution and a per-address error record. */
+type StreamResult = AddressResult | { address: string; error: string }
+
+/**
+ * Serialises a named SSE event and its JSON-encoded payload into the
+ * `text/event-stream` wire format.
+ *
+ * @param event - The SSE event name (e.g. `"result"`, `"progress"`, `"summary"`).
+ * @param data - Any JSON-serialisable value to send as the event data.
+ * @returns A string in the format `event: <name>\ndata: <json>\n\n`.
+ */
 function sseEvent(event: string, data: unknown): string {
   return `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`
 }
 
+/**
+ * POST /api/v1/portfolio/stream
+ *
+ * Server-Sent Events (SSE) endpoint for incremental portfolio scanning. As
+ * each Bitcoin address is resolved it is pushed to the client in real time,
+ * enabling a live progress bar and streaming results dashboard without waiting
+ * for the entire batch to complete.
+ *
+ * @param request - Incoming Next.js request. Expects a JSON body conforming to
+ *   `PortfolioStreamBodySchema`: `{ addresses: string[] }` where `addresses`
+ *   is a non-empty array of up to 1,000 mainnet Bitcoin address strings. The
+ *   client IP is extracted from forwarding headers for rate-limit keying.
+ *
+ * ### Pre-stream error responses (JSON)
+ *   - **400 Bad Request** `{ ok: false, code: 'INVALID_BODY' }` — body is not
+ *     valid JSON or fails schema validation.
+ *   - **429 Too Many Requests** `{ ok: false, code: 'RATE_LIMITED' }` — the
+ *     caller has exceeded the `stream` rate-limit bucket.
+ *
+ * ### SSE event stream (`Content-Type: text/event-stream`)
+ * Once the stream opens the following named events are emitted:
+ *
+ * | Event | Payload | When |
+ * |-------|---------|------|
+ * | `result` | `AddressResult \| { address, error }` | After each address resolves |
+ * | `progress` | `{ completed: number, total: number }` | Every 10 results and on completion |
+ * | `summary` | `{ totalAddresses, completedAddresses, totalBtc, exposedBtc, safeAtRestBtc }` | Once, after all results |
+ *
+ * Addresses that fail validation or upstream resolution are emitted as
+ * `result` events with an `error` string field rather than crashing the stream.
+ *
+ * @remarks
+ * Addresses are resolved concurrently up to `BULK_CONCURRENCY` (env var,
+ * default 5). Invalid addresses are detected before any upstream I/O and
+ * emitted as inline errors rather than killing the stream.
+ *
+ * Rate-limit headers (`X-RateLimit-Limit`, `X-RateLimit-Remaining`,
+ * `X-RateLimit-Reset`) are present on all responses, including the streaming
+ * `200` that opens the SSE connection.
+ *
+ * The response uses `Cache-Control: no-cache` and `Connection: keep-alive` so
+ * that proxies and CDNs do not buffer the event stream.
+ */
 export async function POST(request: NextRequest) {
   const ip = getClientIp(request)
-  const rl = checkRateLimit(ip, 'stream')
+  const rl = await checkRateLimit(ip, 'stream')
   const rlHeaders = rateLimitHeaders(rl)
 
   if (!rl.allowed) {
@@ -59,19 +114,16 @@ export async function POST(request: NextRequest) {
 
       let completed = 0
       const total = addresses.length
-      const results: unknown[] = []
+      const results: StreamResult[] = []
 
       await Promise.all(
         addresses.map((address) =>
           limit(async () => {
             const type = detectAddressType(address)
-            let result: unknown
+            let result: StreamResult
 
             if (type === 'UNKNOWN') {
-              result = {
-                address,
-                error: 'Invalid address format.',
-              }
+              result = { address, error: 'Invalid address format.' }
             } else {
               try {
                 result = await resolveAddress(address, btcPrice)
@@ -93,8 +145,7 @@ export async function POST(request: NextRequest) {
       )
 
       const successful = results.filter(
-        (r): r is { balanceBtc: number; pubkeyExposed: boolean } =>
-          typeof r === 'object' && r !== null && 'balanceBtc' in r
+        (r): r is AddressResult => 'balanceBtc' in r
       )
 
       const totalBtc = successful.reduce((sum, r) => sum + r.balanceBtc, 0)

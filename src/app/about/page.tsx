@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { GitFork, BookOpen, Tag } from 'lucide-react'
+import { GITHUB_URL } from '@/config/site'
 
 export const metadata: Metadata = {
   title: 'About — Bitcoin Quantum Exposure Scanner',
@@ -8,6 +9,24 @@ export const metadata: Metadata = {
     'About the Bitcoin Quantum Exposure Scanner: motivation, methodology reference, open-source license, and author.',
 }
 
+/**
+ * About page — `/about`
+ *
+ * Statically rendered informational page covering the project's motivation,
+ * methodology reference, technical stack, open-source details, and legal
+ * disclaimer. No data fetching occurs at render time.
+ *
+ * ### Sections
+ * - **Why This Tool Exists** — context: the lack of a concrete, address-level
+ *   quantum-vulnerability tool for Bitcoin holders and institutional custodians.
+ * - **Methodology Reference** — full citation for Ray, Gautam & Ryan (2026),
+ *   the academic paper whose CRQC timeline framework this tool implements.
+ * - **Technical Stack** — bulleted list of key libraries and services
+ *   (Next.js, Tailwind, shadcn/ui, Papa Parse, mempool.space, CoinGecko, etc.).
+ * - **Open Source** — MIT licence, link to GitHub (via `GITHUB_URL` constant),
+ *   link to `/methodology`, and CTA to `/scan`.
+ * - **Disclaimer** — informational-only notice; not financial advice.
+ */
 export default function AboutPage() {
   return (
     <main className="container mx-auto max-w-3xl px-4 py-12">
@@ -89,7 +108,7 @@ export default function AboutPage() {
           </p>
           <div className="mt-4 flex flex-wrap gap-3">
             <a
-              href="https://github.com/rahil1206/quantum-scanner"
+              href={GITHUB_URL}
               className="font-stamp border-tag-edge bg-manila text-ink-mid hover:text-ink-dark hover:border-ink-mid inline-flex items-center gap-2 rounded-lg border-2 px-4 py-2 text-xs tracking-wider transition-colors"
               target="_blank"
               rel="noopener noreferrer"

@@ -29,6 +29,30 @@ const NAV_LINKS = [
   { href: '/about', label: 'About' },
 ]
 
+/**
+ * Root layout — wraps every route in the application.
+ *
+ * Injects the two global Google Fonts as CSS custom properties and applies the
+ * base `bg-parchment` page background. Renders the persistent sticky header
+ * with main navigation and the site-wide footer.
+ *
+ * ### Fonts
+ * - `--font-bebas-neue` → `font-stamp` utility class — used for headings,
+ *   labels, and display text throughout the baggage-tag design system.
+ * - `--font-courier-prime` → `font-form` utility class — used for body copy,
+ *   form labels, and data values.
+ *
+ * ### Header
+ * A sticky top bar (z-index 40) containing the brand logo link (`/`) and the
+ * primary navigation: Scan · Portfolio · Methodology · About.
+ *
+ * ### Footer
+ * Centred footer with MIT licence notice, GitHub link, privacy statement, and
+ * a link to `/methodology`.
+ *
+ * @param children - The active page or layout subtree rendered by the
+ *   Next.js App Router.
+ */
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {

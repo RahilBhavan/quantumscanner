@@ -4,14 +4,28 @@ import { useState, useMemo } from 'react'
 import { ArrowUpDown } from 'lucide-react'
 import type { AddressResult } from '@/lib/api/resolve-address'
 
+/** Column keys that can be used to sort the address table. */
 type SortKey = 'address' | 'classification' | 'balanceBtc' | 'riskScore'
+
+/** Sort direction for the currently active sort key. */
 type SortDir = 'asc' | 'desc'
+
+/**
+ * Classification filter value. `'ALL'` disables filtering; the other values
+ * are the possible `AddressResult['classification']` literals.
+ */
 type ClassFilter = 'ALL' | AddressResult['classification']
 
+/** Props for {@link AddressTable}. */
 interface AddressTableProps {
+  /** The full array of scan results to display and sort. */
   results: AddressResult[]
 }
 
+/**
+ * Maps each classification string to a human-readable label and the
+ * Tailwind classes for its inline badge in the table.
+ */
 const CLASSIFICATION_BADGE: Record<
   string,
   { label: string; className: string }
@@ -34,11 +48,34 @@ const CLASSIFICATION_BADGE: Record<
   },
 }
 
+/**
+ * Sortable, filterable table listing all addresses from a completed portfolio scan.
+ *
+ * Provides:
+ * - Filter stubs to narrow by classification (ALL / EXPOSED / SAFE_AT_REST /
+ *   EMPTY / UNRESOLVABLE), with live counts on each button.
+ * - Column-header sort buttons for address, classification, BTC balance, and
+ *   base-scenario risk score. Clicking the active column toggles direction;
+ *   clicking a new column resets direction to descending.
+ * - Colour-coded classification badges aligned with the baggage-tag design system.
+ * - Addresses are truncated to `first-16…last-8` characters to keep the layout
+ *   stable across address types.
+ *
+ * Sorting and filtering are derived via `useMemo` to avoid re-sorting on every
+ * render when only unrelated state changes.
+ */
 export function AddressTable({ results }: AddressTableProps) {
+  // Default sort: highest base risk score first, so the most urgent addresses
+  // appear at the top without any user interaction.
   const [sortKey, setSortKey] = useState<SortKey>('riskScore')
   const [sortDir, setSortDir] = useState<SortDir>('desc')
   const [filter, setFilter] = useState<ClassFilter>('ALL')
 
+  /**
+   * Toggles sort direction when the same column header is clicked again;
+   * switches to the new key with descending order when a different column
+   * is clicked.
+   */
   function toggleSort(key: SortKey) {
     if (sortKey === key) {
       setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))
@@ -48,6 +85,12 @@ export function AddressTable({ results }: AddressTableProps) {
     }
   }
 
+  /**
+   * Derives the filtered and sorted row array from `results`, `filter`,
+   * `sortKey`, and `sortDir`. A spread copy (`[...base]`) is made before
+   * sorting to preserve immutability — the original `results` prop is
+   * never mutated.
+   */
   const filtered = useMemo(() => {
     const base =
       filter === 'ALL'

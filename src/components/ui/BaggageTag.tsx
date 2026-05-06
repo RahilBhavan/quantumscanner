@@ -1,20 +1,78 @@
 import { cn } from '@/lib/utils'
 
+/**
+ * Visual severity variant for a baggage tag.
+ * Maps to distinct background, ink, and border colour sets defined in
+ * {@link VARIANT_STYLES}.
+ *
+ * | Variant   | Semantic meaning                        |
+ * |-----------|-----------------------------------------|
+ * | safe      | Address is safe at rest                 |
+ * | exposed   | Address public key is on-chain exposed  |
+ * | empty     | Address has no UTXO balance             |
+ * | error     | Address is unresolvable / error state   |
+ * | neutral   | Generic / informational use             |
+ */
 export type TagVariant = 'safe' | 'exposed' | 'empty' | 'error' | 'neutral'
+
+/**
+ * Controls the maximum width of the tag card and the font size of the
+ * destination heading.
+ *
+ * | Size | Max width | Destination text |
+ * |------|-----------|-----------------|
+ * | sm   | max-w-xs  | text-3xl        |
+ * | md   | max-w-sm  | text-5xl        |
+ * | lg   | max-w-lg  | text-7xl        |
+ */
 export type TagSize = 'sm' | 'md' | 'lg'
 
+/** Props for {@link BaggageTag}. */
 interface BaggageTagProps {
+  /**
+   * Colour scheme of the tag. Drives background, border, and ink colours.
+   * Defaults to `'neutral'`.
+   */
   variant?: TagVariant
+  /**
+   * Large heading text rendered in the tag header — analogous to the
+   * destination city printed on a physical luggage label.
+   */
   destination: string
+  /**
+   * Smaller secondary label rendered beneath `destination` in the header,
+   * e.g. `"Safe at Rest"` or `"Quantum Risk"`.
+   */
   subLabel?: string
+  /**
+   * Optional rotated stamp text overlaid in the top-right corner of the
+   * header, e.g. `"Priority"`. Rendered with `aria-hidden` since it is
+   * purely decorative.
+   */
   badge?: string
+  /**
+   * Whether to render the thin vertical line above the hole that simulates
+   * the string used to attach a physical baggage tag. Defaults to `true`.
+   */
   showString?: boolean
+  /**
+   * Whether to render the circular punch hole at the top of the card.
+   * Defaults to `true`.
+   */
   showHole?: boolean
+  /** Size variant controlling card width and heading scale. Defaults to `'md'`. */
   size?: TagSize
+  /** Additional Tailwind classes applied to the outermost wrapper element. */
   className?: string
+  /** Content rendered in the padded body area below the tag header. */
   children?: React.ReactNode
 }
 
+/**
+ * Per-variant Tailwind class bundles for background, text ink, and border.
+ * Centralised here so all four card components derive from the same source
+ * of truth.
+ */
 const VARIANT_STYLES: Record<
   TagVariant,
   { bg: string; ink: string; border: string }
@@ -46,6 +104,10 @@ const VARIANT_STYLES: Record<
   },
 }
 
+/**
+ * Per-size Tailwind class bundles for container max-width, destination heading
+ * font size, and inner padding.
+ */
 const SIZE_STYLES: Record<
   TagSize,
   { container: string; destination: string; padding: string }
@@ -67,7 +129,13 @@ const SIZE_STYLES: Record<
   },
 }
 
-/** Hex values for use in SVG fill props (e.g. Recharts) */
+/**
+ * Hex colour values corresponding to each {@link TagVariant}.
+ *
+ * Used wherever a raw hex string is required instead of a Tailwind class —
+ * primarily as `fill` props on Recharts `<Bar>` elements in
+ * {@link ExposureChart}.
+ */
 export const TAG_COLORS: Record<TagVariant, string> = {
   safe: '#3D5E38',
   exposed: '#7A3028',
@@ -76,6 +144,22 @@ export const TAG_COLORS: Record<TagVariant, string> = {
   neutral: '#5C4F3A',
 }
 
+/**
+ * Core design-system primitive that renders a vintage airline baggage tag.
+ *
+ * All four scan-result cards ({@link SafeAtRestCard}, {@link ExposedCard},
+ * {@link EmptyCard}, {@link UnresolvableCard}) are built on top of this
+ * component. The tag anatomy consists of:
+ *
+ * 1. **String** — a thin vertical line (decorative, `aria-hidden`).
+ * 2. **Hole** — a circular punch mark at the top, overlapping the card edge.
+ * 3. **Header** — contains the large `destination` text, optional `subLabel`,
+ *    and an optional rotated `badge` stamp.
+ * 4. **Body** — padded area for arbitrary `children` content.
+ *
+ * Colour theming is driven by the `variant` prop via {@link VARIANT_STYLES};
+ * card dimensions are controlled by `size` via {@link SIZE_STYLES}.
+ */
 export function BaggageTag({
   variant = 'neutral',
   destination,

@@ -1,4 +1,8 @@
 import { describe, it, expect } from 'vitest'
+import type {
+  ClassificationFlag,
+  ClassificationNote,
+} from '@/lib/classification/types'
 import { screen } from '@testing-library/react'
 import { renderAsync } from '../../../test/render'
 import { EmptyCard } from './EmptyCard'
@@ -10,18 +14,17 @@ import { HighReuseBadge } from './HighReuseBadge'
 
 const BASE_RESULT = {
   address: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
-  type: 'P2PKH',
+  type: 'P2PKH' as const,
   pubkeyExposed: false,
   firstSeen: '2009-01-03',
   lastSpend: null,
   balanceBtc: 50,
   balanceUsd: 3_400_000,
   riskScore: { conservative: 4, base: 11, aggressive: 28 },
-  recommendedAction: 'MONITOR',
+  recommendedAction: 'MONITOR' as const,
   dataSource: 'mempool.space',
-  flags: [] as string[],
-  notes: [] as string[],
-  methodologyUrl: 'http://localhost/methodology',
+  flags: [] as ClassificationFlag[],
+  notes: [] as ClassificationNote[],
 }
 
 describe('EmptyCard', () => {

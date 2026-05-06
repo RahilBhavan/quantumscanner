@@ -2,11 +2,23 @@
 
 import { BaggageTag } from '@/components/ui/BaggageTag'
 
+/** Props for {@link UnresolvableCard}. */
 interface Props {
+  /** The raw address string that could not be resolved. */
   address: string
+  /** Callback invoked when the user clicks the "Try again" button. */
   onRetry: () => void
 }
 
+/**
+ * Fallback result card shown when an address cannot be resolved.
+ *
+ * Displayed when the address format is unrecognised or when the upstream
+ * blockchain data fetch fails. Guides the user toward manual verification on
+ * external block explorers and offers a retry action. This card carries no
+ * classification data — it surfaces errors surfaced by the API or the
+ * classifier's UNRESOLVABLE path.
+ */
 export function UnresolvableCard({ address, onRetry }: Props) {
   return (
     <BaggageTag variant="error" destination="Error" subLabel="Unresolvable">
