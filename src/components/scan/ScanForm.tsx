@@ -1,41 +1,26 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { detectAddressType } from '@/lib/classification/detect-type'
 import type { AddressResult } from '@/lib/api/resolve-address'
 import { scanAddress } from '@/lib/client/api'
 import { ResultCard } from './ResultCard'
 
-/**
- * Discriminated union representing the lifecycle of a single address scan.
- * The component renders different UI for each status, with the result or
- * error message carried directly on the relevant variant.
- */
 type ScanState =
   | { status: 'idle' }
   | { status: 'loading' }
   | { status: 'success'; result: AddressResult }
   | { status: 'error'; message: string }
 
-/**
- * Primary interaction surface for the single-address scanner.
- *
- * Renders a text input for a Bitcoin address, validates the format client-side
- * before submission, calls the scan API, and displays the result via
- * {@link ResultCard}. Validation runs eagerly on each keystroke after the
- * first failed attempt so the user gets immediate feedback as they correct
- * their input.
- */
-export function ScanForm() {
-  const [address, setAddress] = useState('')
+interface ScanFormProps {
+  initialAddress?: string
+}
+
+export function ScanForm({ initialAddress }: ScanFormProps) {
+  const [address, setAddress] = useState(initialAddress ?? '')
   const [validationError, setValidationError] = useState<string | null>(null)
   const [state, setState] = useState<ScanState>({ status: 'idle' })
 
-  /**
-   * Returns a human-readable error string when `value` fails validation,
-   * or `null` when the value is acceptable. Rejects empty strings and any
-   * address that cannot be identified as a known mainnet type.
-   */
   function validate(value: string): string | null {
     if (!value.trim()) return 'Please enter a Bitcoin address.'
     if (detectAddressType(value.trim()) === 'UNKNOWN') {
@@ -44,26 +29,8 @@ export function ScanForm() {
     return null
   }
 
-  /**
-   * Keeps `address` state in sync with the input and, once the user has
-   * already triggered a validation error, re-validates on every keystroke
-   * so the error clears as soon as the value becomes valid.
-   */
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setAddress(e.target.value)
-    if (validationError) setValidationError(validate(e.target.value))
-  }
-
-  /**
-   * Handles form submission: validates the trimmed address, sets loading
-   * state, calls the scan API, and transitions to either the success or
-   * error state. The form's `noValidate` attribute delegates all validation
-   * to this handler rather than the browser.
-   */
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    const trimmed = address.trim()
-    const err = validate(trimmed)
+  async function performScan(addr: string) {
+    const err = validate(addr)
     if (err) {
       setValidationError(err)
       return
@@ -71,7 +38,7 @@ export function ScanForm() {
     setValidationError(null)
     setState({ status: 'loading' })
     try {
-      const result = await scanAddress(trimmed)
+      const result = await scanAddress(addr)
       setState({ status: 'success', result })
     } catch (error) {
       setState({
@@ -83,6 +50,29 @@ export function ScanForm() {
       })
     }
   }
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setAddress(e.target.value)
+    if (validationError) setValidationError(validate(e.target.value))
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    await performScan(address.trim())
+  }
+
+  function handleReset() {
+    setAddress('')
+    setValidationError(null)
+    setState({ status: 'idle' })
+  }
+
+  // Auto-submit when a pre-filled address arrives via URL param
+  useEffect(() => {
+    const trimmed = initialAddress?.trim()
+    if (trimmed) performScan(trimmed)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <div className="space-y-6">
@@ -128,7 +118,19 @@ export function ScanForm() {
       </form>
 
       <div aria-live="polite" aria-atomic="true">
-        {state.status === 'success' && <ResultCard result={state.result} />}
+        {state.status === 'success' && (
+          <div className="space-y-4">
+            <ResultCard result={state.result} />
+            <div className="text-center">
+              <button
+                onClick={handleReset}
+                className="font-stamp border-tag-edge text-ink-mid hover:text-ink-dark rounded-lg border-2 border-dashed px-4 py-2 text-xs tracking-wider transition-colors"
+              >
+                Scan another address
+              </button>
+            </div>
+          </div>
+        )}
         {state.status === 'error' && (
           <div
             role="alert"

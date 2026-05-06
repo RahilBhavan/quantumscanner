@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { PortfolioClient } from './PortfolioClient'
+import { PortfolioClient } from '@/components/portfolio/PortfolioClient'
 
 export const metadata: Metadata = {
   title: 'Portfolio Scanner — Bitcoin Quantum Exposure Scanner',

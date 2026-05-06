@@ -19,6 +19,7 @@ import type { ValidatedRow } from '@/lib/csv/validate'
 import type { AddressResult } from '@/lib/api/resolve-address'
 
 const SATS_PER_BTC = 100_000_000
+const MAX_SCAN_ADDRESSES = 500
 
 /**
  * The four phases of the portfolio scan lifecycle, used as the discriminant
@@ -234,6 +235,7 @@ export function PortfolioClient() {
     const addresses = state.validatedRows
       .filter((r) => r.isValid && !r.isDuplicate)
       .map((r) => r.address)
+      .slice(0, MAX_SCAN_ADDRESSES)
 
     const cancel = streamPortfolioScan({
       addresses,
@@ -282,13 +284,18 @@ export function PortfolioClient() {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="font-stamp text-ink-dark text-lg">{fileName}</h2>
-              <p className="text-muted-foreground text-sm">
+              <p className="font-form text-ink-mid text-sm">
                 {validCount} valid addresses ·{' '}
                 {validatedRows.filter((r) => r.isDuplicate).length} duplicates ·{' '}
                 {validatedRows.filter((r) => !r.isValid).length} invalid
               </p>
+              {validCount > MAX_SCAN_ADDRESSES && phase === 'preview' && (
+                <p className="font-form text-stamp-red mt-1 text-sm">
+                  Only the first {MAX_SCAN_ADDRESSES} addresses will be scanned.
+                </p>
+              )}
               {parseErrors.map((e, i) => (
-                <p key={i} className="text-destructive mt-1 text-sm">
+                <p key={i} className="font-form text-stamp-red mt-1 text-sm">
                   {e}
                 </p>
               ))}
@@ -303,7 +310,7 @@ export function PortfolioClient() {
                     Change file
                   </Button>
                   <Button onClick={handleScan} disabled={validCount === 0}>
-                    Scan {validCount} addresses
+                    Scan {Math.min(validCount, MAX_SCAN_ADDRESSES)} addresses
                   </Button>
                 </>
               )}
@@ -338,7 +345,7 @@ export function PortfolioClient() {
           {error && (
             <div
               role="alert"
-              className="border-destructive text-destructive rounded-lg border p-4 text-sm"
+              className="font-form border-stamp-red/40 bg-tag-exposed-bg text-tag-exposed rounded-lg border-2 p-4 text-sm"
             >
               Scan encountered an error: {error}
             </div>

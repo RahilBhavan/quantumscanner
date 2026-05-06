@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
 import { BaggageTag } from '@/components/ui/BaggageTag'
 import { LiveCounter } from '@/components/marketing/LiveCounter'
-import { readCounters } from '@/lib/kv/counters'
+import { readCounters, type ScanCounters } from '@/lib/kv/counters'
 import { env } from '@/config/env'
 import { GITHUB_URL } from '@/config/site'
 
@@ -24,8 +24,9 @@ export const metadata: Metadata = {
 
 export const revalidate = 30
 
-async function getCounters() {
-  if (!env.NEXT_PUBLIC_LIVE_COUNTER_ENABLED) return null
+async function getCounters(): Promise<ScanCounters> {
+  if (!env.NEXT_PUBLIC_LIVE_COUNTER_ENABLED)
+    return { totalScanned: 0, exposedCount: 0 }
   return readCounters()
 }
 
@@ -128,16 +129,14 @@ export default async function HomePage() {
       </section>
 
       {/* Live counter — Departure Board */}
-      {counters && (
-        <section className="bg-aged perforation py-10">
-          <div className="container mx-auto max-w-2xl px-4">
-            <h2 className="font-stamp text-ink-faint mb-6 text-center text-sm tracking-[0.25em]">
-              Departure Board
-            </h2>
-            <LiveCounter counters={counters} />
-          </div>
-        </section>
-      )}
+      <section className="bg-aged perforation py-10">
+        <div className="container mx-auto max-w-2xl px-4">
+          <h2 className="font-stamp text-ink-faint mb-6 text-center text-sm tracking-[0.25em]">
+            Departure Board
+          </h2>
+          <LiveCounter counters={counters} />
+        </div>
+      </section>
 
       {/* Explainer panels */}
       <section className="perforation py-16">

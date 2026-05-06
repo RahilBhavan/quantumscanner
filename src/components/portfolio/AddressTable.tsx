@@ -116,10 +116,35 @@ export function AddressTable({ results }: AddressTableProps) {
     'UNRESOLVABLE',
   ]
 
+  function downloadCsv() {
+    const header =
+      'address,type,classification,balanceBtc,pubkeyExposed,recommendedAction,riskScore.conservative,riskScore.base,riskScore.aggressive'
+    const lines = results.map((r) =>
+      [
+        r.address,
+        r.type,
+        r.classification,
+        r.balanceBtc,
+        r.pubkeyExposed,
+        r.recommendedAction,
+        r.riskScore.conservative,
+        r.riskScore.base,
+        r.riskScore.aggressive,
+      ].join(',')
+    )
+    const blob = new Blob([[header, ...lines].join('\n')], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'quantum-scan-results.csv'
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <div className="space-y-3">
-      {/* Filter stubs */}
-      <div className="flex flex-wrap gap-2">
+      {/* Filter toolbar */}
+      <div className="flex flex-wrap items-center gap-2">
         {filters.map((f) => (
           <button
             key={f}
@@ -140,6 +165,12 @@ export function AddressTable({ results }: AddressTableProps) {
             </span>
           </button>
         ))}
+        <button
+          onClick={downloadCsv}
+          className="font-stamp border-tag-edge text-ink-faint hover:text-ink-mid hover:border-ink-mid ml-auto rounded border-2 px-3 py-1.5 text-xs tracking-wider transition-colors"
+        >
+          Export CSV
+        </button>
       </div>
 
       {/* Table */}

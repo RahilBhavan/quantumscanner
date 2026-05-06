@@ -6,7 +6,7 @@ import type {
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { renderAsync } from '../../../test/render'
-import { PortfolioClient } from '../../app/portfolio/PortfolioClient'
+import { PortfolioClient } from './PortfolioClient'
 
 vi.mock('@/lib/client/portfolio-stream', () => ({
   streamPortfolioScan: vi.fn(),
