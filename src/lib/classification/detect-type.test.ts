@@ -12,22 +12,18 @@ describe('detectAddressType', () => {
   })
 
   it('identifies P2SH addresses starting with 3', () => {
-    expect(detectAddressType('3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy')).toBe(
-      'P2SH'
-    )
-    expect(detectAddressType('3Cbq7aT1tY8kMxWLbitaG7yT6bPbKChq64')).toBe(
-      'P2SH'
-    )
+    expect(detectAddressType('3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy')).toBe('P2SH')
+    expect(detectAddressType('3Cbq7aT1tY8kMxWLbitaG7yT6bPbKChq64')).toBe('P2SH')
   })
 
   it('identifies P2WPKH as bc1q with 20-byte witness program (39 chars total)', () => {
     // bc1q + 20-byte witness = 42 char bech32
-    expect(detectAddressType('bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq')).toBe(
-      'P2WPKH'
-    )
-    expect(detectAddressType('bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4')).toBe(
-      'P2WPKH'
-    )
+    expect(
+      detectAddressType('bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq')
+    ).toBe('P2WPKH')
+    expect(
+      detectAddressType('bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4')
+    ).toBe('P2WPKH')
   })
 
   it('identifies P2WSH as bc1q with 32-byte witness program (62 chars total)', () => {

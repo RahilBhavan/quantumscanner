@@ -3,7 +3,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 describe('readCounters — KV unavailable', () => {
   beforeEach(() => {
     vi.resetModules()
-    vi.doMock('@vercel/kv', () => { throw new Error('not installed') })
+    vi.doMock('@vercel/kv', () => {
+      throw new Error('not installed')
+    })
   })
 
   it('returns zeros when KV module cannot be imported', async () => {
@@ -18,9 +20,10 @@ describe('readCounters — KV available', () => {
     vi.resetModules()
     vi.doMock('@vercel/kv', () => ({
       kv: {
-        get: vi.fn()
-          .mockResolvedValueOnce(500)   // total_btc_scanned
-          .mockResolvedValueOnce(120),  // exposed_btc_scanned
+        get: vi
+          .fn()
+          .mockResolvedValueOnce(500) // total_btc_scanned
+          .mockResolvedValueOnce(120), // exposed_btc_scanned
         incrby: vi.fn().mockResolvedValue(1),
       },
     }))
@@ -48,14 +51,24 @@ describe('incrementCounters — KV available', () => {
     const kvMod = await import('@vercel/kv')
     const { incrementCounters } = await import('./counters')
     await incrementCounters({ scannedCount: 5, newExposed: 2 })
-    expect(vi.mocked(kvMod.kv.incrby)).toHaveBeenCalledWith('total_btc_scanned', 5)
-    expect(vi.mocked(kvMod.kv.incrby)).toHaveBeenCalledWith('exposed_btc_scanned', 2)
+    expect(vi.mocked(kvMod.kv.incrby)).toHaveBeenCalledWith(
+      'total_btc_scanned',
+      5
+    )
+    expect(vi.mocked(kvMod.kv.incrby)).toHaveBeenCalledWith(
+      'exposed_btc_scanned',
+      2
+    )
   })
 
   it('does not throw when KV is unavailable', async () => {
     vi.resetModules()
-    vi.doMock('@vercel/kv', () => { throw new Error('not installed') })
+    vi.doMock('@vercel/kv', () => {
+      throw new Error('not installed')
+    })
     const { incrementCounters } = await import('./counters')
-    await expect(incrementCounters({ scannedCount: 1, newExposed: 0 })).resolves.toBeUndefined()
+    await expect(
+      incrementCounters({ scannedCount: 1, newExposed: 0 })
+    ).resolves.toBeUndefined()
   })
 })

@@ -25,15 +25,19 @@ type Tab = (typeof TABS)[number]['value']
 function ScoreDisplay({ score, label }: { score: number; label: string }) {
   const band = toBand(score)
   return (
-    <div className="text-center py-2">
+    <div className="py-2 text-center">
       <div className={`font-stamp text-5xl leading-none ${BAND_COLORS[band]}`}>
         {score}
       </div>
-      <div className="font-form text-xs text-ink-faint mt-0.5">/ 100</div>
-      <div className={`font-stamp text-sm mt-1 tracking-wider ${BAND_COLORS[band]}`}>
+      <div className="font-form text-ink-faint mt-0.5 text-xs">/ 100</div>
+      <div
+        className={`font-stamp mt-1 text-sm tracking-wider ${BAND_COLORS[band]}`}
+      >
         {band}
       </div>
-      <div className="font-form text-xs text-ink-faint mt-0.5">{label} scenario</div>
+      <div className="font-form text-ink-faint mt-0.5 text-xs">
+        {label} scenario
+      </div>
     </div>
   )
 }
@@ -42,14 +46,14 @@ export function RiskScoreToggle({ scores }: RiskScoreToggleProps) {
   const [tab, setTab] = useState<Tab>('base')
 
   return (
-    <div className="border-2 border-tag-edge rounded-lg overflow-hidden">
+    <div className="border-tag-edge overflow-hidden rounded-lg border-2">
       {/* Tab selector — perforated ticket stubs */}
-      <div className="grid grid-cols-3 perforation-b bg-manila">
+      <div className="perforation-b bg-manila grid grid-cols-3">
         {TABS.map((t) => (
           <button
             key={t.value}
             onClick={() => setTab(t.value)}
-            className={`font-stamp text-xs tracking-wider py-2 transition-colors border-r last:border-r-0 border-tag-edge/40 ${
+            className={`font-stamp border-tag-edge/40 border-r py-2 text-xs tracking-wider transition-colors last:border-r-0 ${
               tab === t.value
                 ? 'bg-parchment text-ink-dark'
                 : 'text-ink-faint hover:text-ink-mid'

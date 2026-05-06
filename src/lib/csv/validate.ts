@@ -8,7 +8,7 @@ export interface ValidatedRow extends ParsedRow {
 }
 
 export function validateCsvRows(rows: ParsedRow[]): ValidatedRow[] {
-  return rows.map(row => {
+  return rows.map((row) => {
     const type = detectAddressType(row.address)
     return {
       ...row,

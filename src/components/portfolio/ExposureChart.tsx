@@ -28,8 +28,8 @@ export function ExposureChart({
   const data = [{ name: 'Portfolio', safe, exposed, empty, unresolvable }]
 
   return (
-    <div className="rounded-xl border-2 border-tag-edge bg-manila p-4">
-      <h3 className="font-stamp text-sm tracking-[0.2em] text-ink-faint mb-4">
+    <div className="border-tag-edge bg-manila rounded-xl border-2 p-4">
+      <h3 className="font-stamp text-ink-faint mb-4 text-sm tracking-[0.2em]">
         Address Classification Breakdown
       </h3>
       <ResponsiveContainer width="100%" height={200}>
@@ -41,7 +41,11 @@ export function ExposureChart({
           />
           <XAxis
             type="number"
-            tick={{ fontFamily: 'var(--font-courier-prime)', fontSize: 11, fill: '#9E8E75' }}
+            tick={{
+              fontFamily: 'var(--font-courier-prime)',
+              fontSize: 11,
+              fill: '#9E8E75',
+            }}
           />
           <YAxis type="category" dataKey="name" hide />
           <Tooltip

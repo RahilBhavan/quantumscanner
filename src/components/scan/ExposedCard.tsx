@@ -36,11 +36,11 @@ export function ExposedCard({ result }: Props) {
       <div className="space-y-4">
         <div className="flex items-start justify-between gap-2">
           <div>
-            <p className="font-stamp text-2xl text-tag-exposed leading-none">
+            <p className="font-stamp text-tag-exposed text-2xl leading-none">
               {formatBtc(result.balanceBtc)} BTC
             </p>
             {result.balanceUsd !== null && (
-              <p className="font-form text-xs text-ink-faint mt-0.5">
+              <p className="font-form text-ink-faint mt-0.5 text-xs">
                 {formatUsd(result.balanceUsd)}
               </p>
             )}
@@ -48,49 +48,49 @@ export function ExposedCard({ result }: Props) {
           {hasHighReuse && <HighReuseBadge />}
         </div>
 
-        <p className="font-form text-xs text-ink-dark truncate border-b border-dashed border-tag-edge/40 pb-2">
+        <p className="font-form text-ink-dark border-tag-edge/40 truncate border-b border-dashed pb-2 text-xs">
           {result.address}
         </p>
 
         {isP2tr ? (
-          <p className="font-form text-xs text-ink-mid leading-relaxed">
+          <p className="font-form text-ink-mid text-xs leading-relaxed">
             This is a Taproot (P2TR) address. The x-only public key is embedded
             in the output script and is visible on-chain from the moment funds
             were received — no spend required for exposure.
           </p>
         ) : (
-          <p className="font-form text-xs text-ink-mid leading-relaxed">
+          <p className="font-form text-ink-mid text-xs leading-relaxed">
             Your public key appeared on the Bitcoin blockchain
-            {result.lastSpend ? ` on ${result.lastSpend}` : ''}. A
-            sufficiently powerful quantum computer could derive your private key
-            from this public key using Shor&apos;s algorithm.
+            {result.lastSpend ? ` on ${result.lastSpend}` : ''}. A sufficiently
+            powerful quantum computer could derive your private key from this
+            public key using Shor&apos;s algorithm.
           </p>
         )}
 
         <RiskScoreToggle scores={result.riskScore} />
 
-        <div className="space-y-1.5 perforation pt-3 text-xs font-form">
-          <p className="font-stamp text-xs tracking-wider text-ink-dark">
+        <div className="perforation font-form space-y-1.5 pt-3 text-xs">
+          <p className="font-stamp text-ink-dark text-xs tracking-wider">
             What this means:
           </p>
           <ul className="space-y-1">
-            <li className="flex gap-2 text-tag-exposed">
+            <li className="text-tag-exposed flex gap-2">
               <span aria-hidden>✗</span>
               This address is NOT protected by hash commitments
             </li>
-            <li className="flex gap-2 text-tag-exposed">
+            <li className="text-tag-exposed flex gap-2">
               <span aria-hidden>✗</span>
               Once a CRQC exists, this private key can be computed in hours
             </li>
-            <li className="flex gap-2 text-tag-exposed">
+            <li className="text-tag-exposed flex gap-2">
               <span aria-hidden>✗</span>
               The &ldquo;turnstile&rdquo; migration does NOT apply here
             </li>
           </ul>
         </div>
 
-        <div className="space-y-1.5 perforation pt-3 text-xs font-form text-ink-mid">
-          <p className="font-stamp text-xs tracking-wider text-ink-dark">
+        <div className="perforation font-form text-ink-mid space-y-1.5 pt-3 text-xs">
+          <p className="font-stamp text-ink-dark text-xs tracking-wider">
             Next steps:
           </p>
           <ul className="space-y-1">

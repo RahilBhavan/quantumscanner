@@ -43,7 +43,11 @@ function check(
 
   existing.count += 1
   cache.set(ip, existing)
-  return { allowed: true, remaining: limit - existing.count, resetAt: existing.resetAt }
+  return {
+    allowed: true,
+    remaining: limit - existing.count,
+    resetAt: existing.resetAt,
+  }
 }
 
 export function checkRateLimit(
@@ -51,7 +55,11 @@ export function checkRateLimit(
   type: LimitType
 ): { allowed: boolean; remaining: number; resetAt: number; limit: number } {
   const cache =
-    type === 'single' ? singleCache : type === 'batch' ? batchCache : streamCache
+    type === 'single'
+      ? singleCache
+      : type === 'batch'
+        ? batchCache
+        : streamCache
   const limit = LIMITS[type]
   const result = check(cache, ip, limit)
   return { ...result, limit }
@@ -62,6 +70,12 @@ export function rateLimitHeaders(result: ReturnType<typeof checkRateLimit>) {
     'X-RateLimit-Limit': String(result.limit),
     'X-RateLimit-Remaining': String(result.remaining),
     'X-RateLimit-Reset': String(Math.ceil(result.resetAt / 1000)),
-    ...(result.allowed ? {} : { 'Retry-After': String(Math.ceil((result.resetAt - Date.now()) / 1000)) }),
+    ...(result.allowed
+      ? {}
+      : {
+          'Retry-After': String(
+            Math.ceil((result.resetAt - Date.now()) / 1000)
+          ),
+        }),
   }
 }

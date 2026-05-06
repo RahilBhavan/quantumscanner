@@ -28,7 +28,10 @@ export function computeRiskScore({
     (acc, scenario) => {
       const yearsToMid = Math.max(1, scenario.crqcMidYear - currentYear)
       const raw =
-        exposureRatio * 100 * scenario.weight * Math.pow(1 / yearsToMid, FORMULA_EXPONENT)
+        exposureRatio *
+        100 *
+        scenario.weight *
+        Math.pow(1 / yearsToMid, FORMULA_EXPONENT)
       acc[scenario.id] = Math.min(100, Math.round(raw))
       return acc
     },

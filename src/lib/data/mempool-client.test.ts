@@ -22,9 +22,7 @@ const mockAddress = {
 }
 
 const server = setupServer(
-  http.get(`${API_BASE}/address/:address`, () =>
-    HttpResponse.json(mockAddress)
-  )
+  http.get(`${API_BASE}/address/:address`, () => HttpResponse.json(mockAddress))
 )
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))
@@ -58,8 +56,9 @@ describe('fetchAddressFacts', () => {
 
   it('throws NotFoundError on 404', async () => {
     server.use(
-      http.get(`${API_BASE}/address/:address`, () =>
-        new HttpResponse(null, { status: 404 })
+      http.get(
+        `${API_BASE}/address/:address`,
+        () => new HttpResponse(null, { status: 404 })
       )
     )
     await expect(fetchAddressFacts(TEST_ADDRESS, API_BASE)).rejects.toThrow(
@@ -69,8 +68,9 @@ describe('fetchAddressFacts', () => {
 
   it('throws RateLimitError on 429', async () => {
     server.use(
-      http.get(`${API_BASE}/address/:address`, () =>
-        new HttpResponse(null, { status: 429 })
+      http.get(
+        `${API_BASE}/address/:address`,
+        () => new HttpResponse(null, { status: 429 })
       )
     )
     await expect(fetchAddressFacts(TEST_ADDRESS, API_BASE)).rejects.toThrow(
@@ -80,8 +80,9 @@ describe('fetchAddressFacts', () => {
 
   it('throws UpstreamError on 500', async () => {
     server.use(
-      http.get(`${API_BASE}/address/:address`, () =>
-        new HttpResponse(null, { status: 500 })
+      http.get(
+        `${API_BASE}/address/:address`,
+        () => new HttpResponse(null, { status: 500 })
       )
     )
     await expect(fetchAddressFacts(TEST_ADDRESS, API_BASE)).rejects.toThrow(
@@ -91,10 +92,12 @@ describe('fetchAddressFacts', () => {
 
   it('throws UpstreamError on malformed JSON', async () => {
     server.use(
-      http.get(`${API_BASE}/address/:address`, () =>
-        new HttpResponse('not json', {
-          headers: { 'Content-Type': 'application/json' },
-        })
+      http.get(
+        `${API_BASE}/address/:address`,
+        () =>
+          new HttpResponse('not json', {
+            headers: { 'Content-Type': 'application/json' },
+          })
       )
     )
     await expect(fetchAddressFacts(TEST_ADDRESS, API_BASE)).rejects.toThrow(

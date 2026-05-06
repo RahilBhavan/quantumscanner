@@ -12,10 +12,7 @@ const envSchema = z.object({
     .enum(['true', 'false'])
     .default('false')
     .transform((v) => v === 'true'),
-  NEXT_PUBLIC_CANONICAL_URL: z
-    .string()
-    .url()
-    .default('http://localhost:3000'),
+  NEXT_PUBLIC_CANONICAL_URL: z.string().url().default('http://localhost:3000'),
 })
 
 const _env = envSchema.parse(process.env)

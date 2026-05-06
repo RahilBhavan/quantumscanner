@@ -60,7 +60,7 @@ export function ScanForm() {
         <div className="mb-4">
           <label
             htmlFor="address-input"
-            className="font-stamp text-xs tracking-[0.2em] text-ink-faint block mb-2"
+            className="font-stamp text-ink-faint mb-2 block text-xs tracking-[0.2em]"
           >
             Destination Address:
           </label>
@@ -75,7 +75,7 @@ export function ScanForm() {
             aria-describedby={validationError ? 'address-error' : undefined}
             autoComplete="off"
             spellCheck={false}
-            className="font-form w-full bg-transparent border-0 border-b-2 border-tag-edge text-ink-dark text-sm py-2 px-0 placeholder:text-ink-faint focus:outline-none focus:border-ink-mid transition-colors"
+            className="font-form border-tag-edge text-ink-dark placeholder:text-ink-faint focus:border-ink-mid w-full border-0 border-b-2 bg-transparent px-0 py-2 text-sm transition-colors focus:outline-none"
           />
           {validationError && (
             <p
@@ -91,7 +91,7 @@ export function ScanForm() {
         <button
           type="submit"
           disabled={state.status === 'loading'}
-          className="font-stamp tracking-wider w-full bg-ink-dark text-parchment py-2.5 rounded-lg text-sm hover:bg-ink-mid transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="font-stamp bg-ink-dark text-parchment hover:bg-ink-mid w-full rounded-lg py-2.5 text-sm tracking-wider transition-colors disabled:cursor-not-allowed disabled:opacity-50"
         >
           {state.status === 'loading' ? 'Scanning…' : 'Scan address'}
         </button>
@@ -102,12 +102,12 @@ export function ScanForm() {
         {state.status === 'error' && (
           <div
             role="alert"
-            className="font-form border-2 border-stamp-red/40 bg-tag-exposed-bg text-tag-exposed rounded-lg p-4 text-sm"
+            className="font-form border-stamp-red/40 bg-tag-exposed-bg text-tag-exposed rounded-lg border-2 p-4 text-sm"
           >
             {state.message}{' '}
             <button
               onClick={() => setState({ status: 'idle' })}
-              className="underline font-stamp text-xs tracking-wider"
+              className="font-stamp text-xs tracking-wider underline"
             >
               Try again
             </button>

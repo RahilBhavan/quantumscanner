@@ -71,11 +71,16 @@ export async function POST(request: NextRequest) {
   )
 
   const successful = results.filter((r) => !('error' in r))
-  const totalBtc = successful.reduce((sum, r) => sum + ('balanceBtc' in r ? r.balanceBtc : 0), 0)
+  const totalBtc = successful.reduce(
+    (sum, r) => sum + ('balanceBtc' in r ? r.balanceBtc : 0),
+    0
+  )
   const exposedBtc = successful.reduce(
     (sum, r) =>
       sum +
-      ('pubkeyExposed' in r && r.pubkeyExposed && 'balanceBtc' in r ? r.balanceBtc : 0),
+      ('pubkeyExposed' in r && r.pubkeyExposed && 'balanceBtc' in r
+        ? r.balanceBtc
+        : 0),
     0
   )
   const safeAtRestBtc = totalBtc - exposedBtc

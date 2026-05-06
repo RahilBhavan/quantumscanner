@@ -14,7 +14,11 @@ const base: AddressFacts = {
 
 describe('classifyAddress', () => {
   it('P2PKH never-spent with balance → SAFE_AT_REST', () => {
-    const result = classifyAddress({ ...base, txCount: 1, hasOutgoingTx: false })
+    const result = classifyAddress({
+      ...base,
+      txCount: 1,
+      hasOutgoingTx: false,
+    })
     expect(result.classification).toBe('SAFE_AT_REST')
     expect(result.pubkeyExposed).toBe(false)
   })

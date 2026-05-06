@@ -81,7 +81,7 @@ export function AddressTable({ results }: AddressTableProps) {
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`font-stamp text-xs tracking-wider px-3 py-1.5 rounded border-2 transition-colors ${
+            className={`font-stamp rounded border-2 px-3 py-1.5 text-xs tracking-wider transition-colors ${
               filter === f
                 ? 'bg-ink-dark text-parchment border-ink-dark'
                 : 'bg-manila text-ink-faint border-tag-edge hover:text-ink-mid hover:border-ink-mid'
@@ -100,7 +100,7 @@ export function AddressTable({ results }: AddressTableProps) {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-xl border-2 border-tag-edge">
+      <div className="border-tag-edge overflow-x-auto rounded-xl border-2">
         <table className="w-full text-sm">
           <thead className="bg-manila">
             <tr className="perforation-b">
@@ -115,7 +115,7 @@ export function AddressTable({ results }: AddressTableProps) {
                 <th key={key} className="px-4 py-2.5 text-left">
                   <button
                     onClick={() => toggleSort(key)}
-                    className="font-stamp text-xs tracking-wider text-ink-faint hover:text-ink-dark flex items-center gap-1 transition-colors"
+                    className="font-stamp text-ink-faint hover:text-ink-dark flex items-center gap-1 text-xs tracking-wider transition-colors"
                   >
                     {label}
                     <ArrowUpDown className="h-3 w-3" />
@@ -130,22 +130,22 @@ export function AddressTable({ results }: AddressTableProps) {
               return (
                 <tr
                   key={r.address}
-                  className="border-t border-tag-edge/30 hover:bg-manila/60 transition-colors"
+                  className="border-tag-edge/30 hover:bg-manila/60 border-t transition-colors"
                 >
-                  <td className="px-4 py-2.5 font-form font-mono text-xs text-ink-dark">
+                  <td className="font-form text-ink-dark px-4 py-2.5 font-mono text-xs">
                     {r.address.slice(0, 16)}…{r.address.slice(-8)}
                   </td>
                   <td className="px-4 py-2.5">
                     <span
-                      className={`font-stamp text-xs tracking-wider inline-flex items-center rounded border-2 px-2 py-0.5 ${badge?.className ?? ''}`}
+                      className={`font-stamp inline-flex items-center rounded border-2 px-2 py-0.5 text-xs tracking-wider ${badge?.className ?? ''}`}
                     >
                       {badge?.label ?? r.classification}
                     </span>
                   </td>
-                  <td className="px-4 py-2.5 font-form tabular-nums text-xs text-ink-mid">
+                  <td className="font-form text-ink-mid px-4 py-2.5 text-xs tabular-nums">
                     {r.balanceBtc.toFixed(8)}
                   </td>
-                  <td className="px-4 py-2.5 font-stamp text-sm tabular-nums text-ink-dark">
+                  <td className="font-stamp text-ink-dark px-4 py-2.5 text-sm tabular-nums">
                     {r.riskScore.base}
                   </td>
                 </tr>

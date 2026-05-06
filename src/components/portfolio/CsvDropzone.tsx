@@ -48,14 +48,14 @@ export function CsvDropzone({ onFile, disabled }: CsvDropzoneProps) {
         disabled && 'pointer-events-none opacity-50'
       )}
     >
-      <p className="font-stamp text-4xl text-ink-dark leading-none">
+      <p className="font-stamp text-ink-dark text-4xl leading-none">
         Drop Luggage Here
       </p>
       <div>
-        <p className="font-form text-sm text-ink-mid">
+        <p className="font-form text-ink-mid text-sm">
           Drop your CSV here or click to browse
         </p>
-        <p className="font-form text-xs text-ink-faint mt-1">
+        <p className="font-form text-ink-faint mt-1 text-xs">
           Up to {MAX_ROWS.toLocaleString()} Bitcoin addresses · .csv format
         </p>
       </div>

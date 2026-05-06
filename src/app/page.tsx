@@ -63,7 +63,7 @@ export default async function HomePage() {
             subLabel="Exposure Scanner"
             size="lg"
           >
-            <p className="font-form text-ink-mid text-sm leading-relaxed mb-6">
+            <p className="font-form text-ink-mid mb-6 text-sm leading-relaxed">
               Enter a Bitcoin address or upload a portfolio CSV to instantly
               check quantum exposure risk — free, open-source, no sign-up
               required.
@@ -82,7 +82,7 @@ export default async function HomePage() {
                 href="/portfolio"
                 className={cn(
                   buttonVariants({ variant: 'outline', size: 'lg' }),
-                  'font-stamp tracking-wider border-dashed'
+                  'font-stamp border-dashed tracking-wider'
                 )}
               >
                 Scan Portfolio
@@ -91,7 +91,7 @@ export default async function HomePage() {
             <div className="mt-4">
               <a
                 href="https://github.com/rahil1206/quantum-scanner"
-                className="font-form inline-flex items-center gap-1.5 text-xs text-ink-faint hover:text-ink-mid transition-colors"
+                className="font-form text-ink-faint hover:text-ink-mid inline-flex items-center gap-1.5 text-xs transition-colors"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -107,7 +107,7 @@ export default async function HomePage() {
       {counters && (
         <section className="bg-aged perforation py-10">
           <div className="container mx-auto max-w-2xl px-4">
-            <h2 className="font-stamp text-sm text-ink-faint tracking-[0.25em] text-center mb-6">
+            <h2 className="font-stamp text-ink-faint mb-6 text-center text-sm tracking-[0.25em]">
               Departure Board
             </h2>
             <LiveCounter counters={counters} />
@@ -116,12 +116,12 @@ export default async function HomePage() {
       )}
 
       {/* Explainer panels */}
-      <section className="py-16 perforation">
+      <section className="perforation py-16">
         <div className="container mx-auto max-w-5xl px-4">
-          <h2 className="font-stamp text-4xl text-center text-ink-dark mb-10">
+          <h2 className="font-stamp text-ink-dark mb-10 text-center text-4xl">
             How It Works
           </h2>
-          <div className="grid gap-8 sm:grid-cols-3 justify-items-center">
+          <div className="grid justify-items-center gap-8 sm:grid-cols-3">
             {EXPLAINER_TAGS.map((tag) => (
               <BaggageTag
                 key={tag.destination}
@@ -130,7 +130,7 @@ export default async function HomePage() {
                 subLabel={tag.subLabel}
                 size="sm"
               >
-                <p className="font-form text-xs text-ink-mid leading-relaxed">
+                <p className="font-form text-ink-mid text-xs leading-relaxed">
                   {tag.body}
                 </p>
               </BaggageTag>
@@ -142,7 +142,7 @@ export default async function HomePage() {
       {/* Bottom CTA */}
       <section className="bg-manila perforation py-16 text-center">
         <div className="container mx-auto max-w-xl px-4">
-          <h2 className="font-stamp text-4xl text-ink-dark">
+          <h2 className="font-stamp text-ink-dark text-4xl">
             Ready to check your addresses?
           </h2>
           <p className="font-form text-ink-mid mt-2 text-sm">
@@ -159,7 +159,7 @@ export default async function HomePage() {
               href="/portfolio"
               className={cn(
                 buttonVariants({ variant: 'outline' }),
-                'font-stamp tracking-wider border-dashed'
+                'font-stamp border-dashed tracking-wider'
               )}
             >
               Upload Portfolio CSV

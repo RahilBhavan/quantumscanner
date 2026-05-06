@@ -23,15 +23,19 @@ function parseNoHeader(text: string): ParsedRow[] {
   const lines = text
     .replace(/﻿/, '')
     .split(/\r?\n/)
-    .map(l => l.trim())
+    .map((l) => l.trim())
     .filter(Boolean)
-  return lines.map((addr, i) => ({ address: addr, lineNumber: i + 1, isDuplicate: false }))
+  return lines.map((addr, i) => ({
+    address: addr,
+    lineNumber: i + 1,
+    isDuplicate: false,
+  }))
 }
 
 export function parseCsv(file: File): Promise<ParseResult> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
-    reader.onload = e => {
+    reader.onload = (e) => {
       const raw = (e.target?.result as string) ?? ''
       const text = raw.replace(/﻿/, '').trimStart()
 
@@ -46,9 +50,10 @@ export function parseCsv(file: File): Promise<ParseResult> {
       Papa.parse<Record<string, string>>(file, {
         header: true,
         skipEmptyLines: true,
-        transformHeader: (h: string) => h.replace(/^﻿/, '').trim().toLowerCase(),
+        transformHeader: (h: string) =>
+          h.replace(/^﻿/, '').trim().toLowerCase(),
         transform: (v: string) => v.trim(),
-        complete: results => {
+        complete: (results) => {
           const errors: string[] = []
           const rawRows = results.data
 
@@ -57,11 +62,11 @@ export function parseCsv(file: File): Promise<ParseResult> {
             .map((row, i) => ({
               address: addressCol
                 ? (row[addressCol] ?? '').trim()
-                : Object.values(row)[0]?.trim() ?? '',
+                : (Object.values(row)[0]?.trim() ?? ''),
               lineNumber: i + 1,
               isDuplicate: false,
             }))
-            .filter(r => r.address.length > 0)
+            .filter((r) => r.address.length > 0)
 
           resolve(buildResult(rows, errors))
         },
@@ -79,12 +84,14 @@ function buildResult(rows: ParsedRow[], errors: string[]): ParseResult {
   const cappedErrors = [...errors]
   let capped = rows
   if (rows.length > MAX_ROWS) {
-    cappedErrors.push(`Row count exceeded ${MAX_ROWS}. Only the first ${MAX_ROWS} rows were imported.`)
+    cappedErrors.push(
+      `Row count exceeded ${MAX_ROWS}. Only the first ${MAX_ROWS} rows were imported.`
+    )
     capped = rows.slice(0, MAX_ROWS)
   }
 
   const seen = new Set<string>()
-  const deduped: ParsedRow[] = capped.map(r => {
+  const deduped: ParsedRow[] = capped.map((r) => {
     const isDuplicate = seen.has(r.address)
     seen.add(r.address)
     return { ...r, isDuplicate }
@@ -97,7 +104,11 @@ function detectAddressColumn(rows: Record<string, string>[]): string | null {
   if (rows.length === 0) return null
   const keys = Object.keys(rows[0])
   const match = keys.find(
-    k => k === 'address' || k === 'addr' || k === 'btc_address' || k === 'bitcoin_address'
+    (k) =>
+      k === 'address' ||
+      k === 'addr' ||
+      k === 'btc_address' ||
+      k === 'bitcoin_address'
   )
   return match ?? null
 }

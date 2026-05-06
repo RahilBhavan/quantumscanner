@@ -3,7 +3,14 @@ import type { AddressResult } from '@/lib/api/resolve-address'
 export type StreamEvent =
   | { type: 'progress'; completed: number; total: number }
   | { type: 'result'; data: AddressResult }
-  | { type: 'summary'; total: number; exposed: number; safe: number; empty: number; unresolvable: number }
+  | {
+      type: 'summary'
+      total: number
+      exposed: number
+      safe: number
+      empty: number
+      unresolvable: number
+    }
   | { type: 'error'; message: string }
 
 export interface StreamOptions {
@@ -24,7 +31,7 @@ export function streamPortfolioScan(opts: StreamOptions): () => void {
     body: JSON.stringify({ addresses }),
     signal: controller.signal,
   })
-    .then(res => {
+    .then((res) => {
       if (!res.ok) {
         throw new Error(`Stream request failed: ${res.status}`)
       }
@@ -63,7 +70,7 @@ export function streamPortfolioScan(opts: StreamOptions): () => void {
 
       return pump()
     })
-    .catch(err => {
+    .catch((err) => {
       if (err instanceof Error && err.name === 'AbortError') return
       onError(err instanceof Error ? err : new Error(String(err)))
     })

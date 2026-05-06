@@ -9,12 +9,16 @@ vi.mock('@/lib/client/portfolio-stream', () => ({
 }))
 
 vi.mock('@/lib/csv/parse', async () => {
-  const actual = await vi.importActual<typeof import('@/lib/csv/parse')>('@/lib/csv/parse')
+  const actual =
+    await vi.importActual<typeof import('@/lib/csv/parse')>('@/lib/csv/parse')
   return { ...actual, parseCsv: vi.fn() }
 })
 
 vi.mock('@/lib/csv/validate', async () => {
-  const actual = await vi.importActual<typeof import('@/lib/csv/validate')>('@/lib/csv/validate')
+  const actual =
+    await vi.importActual<typeof import('@/lib/csv/validate')>(
+      '@/lib/csv/validate'
+    )
   return { ...actual, validateCsvRows: vi.fn() }
 })
 
@@ -52,13 +56,18 @@ const MOCK_RESULT = {
 }
 
 function makeFile(name = 'portfolio.csv') {
-  return new File(['address\n1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa\n'], name, { type: 'text/csv' })
+  return new File(['address\n1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa\n'], name, {
+    type: 'text/csv',
+  })
 }
 
 describe('PortfolioClient', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    mockParse.mockResolvedValue({ rows: [{ address: VALID_ROW.address, lineNumber: 1, isDuplicate: false }], errors: [] })
+    mockParse.mockResolvedValue({
+      rows: [{ address: VALID_ROW.address, lineNumber: 1, isDuplicate: false }],
+      errors: [],
+    })
     mockValidate.mockReturnValue([VALID_ROW])
     mockStream.mockReturnValue(() => {})
   })
@@ -71,27 +80,48 @@ describe('PortfolioClient', () => {
   it('shows preview after file upload', async () => {
     await renderAsync(<PortfolioClient />)
     const file = makeFile()
-    const input = document.querySelector('input[type="file"]')! as HTMLInputElement
+    const input = document.querySelector(
+      'input[type="file"]'
+    )! as HTMLInputElement
     await userEvent.upload(input, file)
-    await waitFor(() => expect(screen.getByText(/portfolio\.csv/i)).toBeDefined())
-    expect(screen.getByRole('button', { name: /scan 1 address/i })).toBeDefined()
+    await waitFor(() =>
+      expect(screen.getByText(/portfolio\.csv/i)).toBeDefined()
+    )
+    expect(
+      screen.getByRole('button', { name: /scan 1 address/i })
+    ).toBeDefined()
   })
 
   it('shows parse errors when CSV has issues', async () => {
-    mockParse.mockResolvedValue({ rows: [], errors: ['Row count exceeded 1000.'] })
+    mockParse.mockResolvedValue({
+      rows: [],
+      errors: ['Row count exceeded 1000.'],
+    })
     mockValidate.mockReturnValue([])
     await renderAsync(<PortfolioClient />)
-    const input = document.querySelector('input[type="file"]')! as HTMLInputElement
+    const input = document.querySelector(
+      'input[type="file"]'
+    )! as HTMLInputElement
     await userEvent.upload(input, makeFile())
-    await waitFor(() => expect(screen.getByText(/Row count exceeded/i)).toBeDefined())
+    await waitFor(() =>
+      expect(screen.getByText(/Row count exceeded/i)).toBeDefined()
+    )
   })
 
   it('starts scan and shows progress bar', async () => {
     await renderAsync(<PortfolioClient />)
-    const input = document.querySelector('input[type="file"]')! as HTMLInputElement
+    const input = document.querySelector(
+      'input[type="file"]'
+    )! as HTMLInputElement
     await userEvent.upload(input, makeFile())
-    await waitFor(() => expect(screen.getByRole('button', { name: /scan 1 address/i })).toBeDefined())
-    await userEvent.click(screen.getByRole('button', { name: /scan 1 address/i }))
+    await waitFor(() =>
+      expect(
+        screen.getByRole('button', { name: /scan 1 address/i })
+      ).toBeDefined()
+    )
+    await userEvent.click(
+      screen.getByRole('button', { name: /scan 1 address/i })
+    )
     await waitFor(() => expect(screen.getByRole('progressbar')).toBeDefined())
   })
 
@@ -102,22 +132,37 @@ describe('PortfolioClient', () => {
       return () => {}
     })
     await renderAsync(<PortfolioClient />)
-    const input = document.querySelector('input[type="file"]')! as HTMLInputElement
+    const input = document.querySelector(
+      'input[type="file"]'
+    )! as HTMLInputElement
     await userEvent.upload(input, makeFile())
     await waitFor(() => screen.getByRole('button', { name: /scan 1 address/i }))
-    await userEvent.click(screen.getByRole('button', { name: /scan 1 address/i }))
-    await waitFor(() => expect(screen.getByRole('button', { name: /start over/i })).toBeDefined())
+    await userEvent.click(
+      screen.getByRole('button', { name: /scan 1 address/i })
+    )
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: /start over/i })).toBeDefined()
+    )
   })
 
   it('resets to upload phase on "Start over"', async () => {
-    mockStream.mockImplementation(({ onDone }) => { onDone(); return () => {} })
+    mockStream.mockImplementation(({ onDone }) => {
+      onDone()
+      return () => {}
+    })
     await renderAsync(<PortfolioClient />)
-    const input = document.querySelector('input[type="file"]')! as HTMLInputElement
+    const input = document.querySelector(
+      'input[type="file"]'
+    )! as HTMLInputElement
     await userEvent.upload(input, makeFile())
     await waitFor(() => screen.getByRole('button', { name: /scan 1 address/i }))
-    await userEvent.click(screen.getByRole('button', { name: /scan 1 address/i }))
+    await userEvent.click(
+      screen.getByRole('button', { name: /scan 1 address/i })
+    )
     await waitFor(() => screen.getByRole('button', { name: /start over/i }))
     await userEvent.click(screen.getByRole('button', { name: /start over/i }))
-    await waitFor(() => expect(screen.getByRole('button', { name: /upload csv/i })).toBeDefined())
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: /upload csv/i })).toBeDefined()
+    )
   })
 })

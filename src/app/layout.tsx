@@ -37,12 +37,12 @@ export default function RootLayout({
       lang="en"
       className={`${bebasNeue.variable} ${courierPrime.variable} h-full`}
     >
-      <body className="flex min-h-full flex-col bg-parchment">
-        <header className="sticky top-0 z-40 border-b-2 border-tag-edge bg-aged">
+      <body className="bg-parchment flex min-h-full flex-col">
+        <header className="border-tag-edge bg-aged sticky top-0 z-40 border-b-2">
           <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
             <Link
               href="/"
-              className="flex items-center gap-2 text-ink-dark hover:text-ink-mid transition-colors"
+              className="text-ink-dark hover:text-ink-mid flex items-center gap-2 transition-colors"
             >
               <Tag className="h-5 w-5" />
               <span className="font-stamp text-xl leading-none">
@@ -55,7 +55,7 @@ export default function RootLayout({
                   <li key={link.href} className="flex items-center">
                     {i > 0 && (
                       <span
-                        className="select-none px-1 text-ink-faint font-form text-sm"
+                        className="text-ink-faint font-form px-1 text-sm select-none"
                         aria-hidden="true"
                       >
                         ·
@@ -63,7 +63,7 @@ export default function RootLayout({
                     )}
                     <Link
                       href={link.href}
-                      className="font-stamp text-sm text-ink-mid hover:text-ink-dark px-2 py-1 transition-colors"
+                      className="font-stamp text-ink-mid hover:text-ink-dark px-2 py-1 text-sm transition-colors"
                     >
                       {link.label}
                     </Link>
@@ -77,10 +77,8 @@ export default function RootLayout({
         <div className="flex flex-1 flex-col">{children}</div>
 
         <footer className="bg-aged perforation py-5 text-center">
-          <p className="font-form text-xs text-ink-faint tracking-widest uppercase">
-            MIT License{' '}
-            <span aria-hidden="true">·</span>{' '}
-            Open source on{' '}
+          <p className="font-form text-ink-faint text-xs tracking-widest uppercase">
+            MIT License <span aria-hidden="true">·</span> Open source on{' '}
             <a
               href="https://github.com/rahil1206/quantum-scanner"
               className="text-ink-mid hover:text-ink-dark underline transition-colors"
@@ -89,8 +87,7 @@ export default function RootLayout({
             >
               GitHub
             </a>{' '}
-            <span aria-hidden="true">·</span>{' '}
-            No personal data stored{' '}
+            <span aria-hidden="true">·</span> No personal data stored{' '}
             <span aria-hidden="true">·</span>{' '}
             <Link
               href="/methodology"

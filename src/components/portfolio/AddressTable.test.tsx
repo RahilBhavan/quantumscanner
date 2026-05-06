@@ -26,9 +26,25 @@ function makeResult(overrides: Partial<AddressResult> = {}): AddressResult {
 }
 
 const RESULTS: AddressResult[] = [
-  makeResult({ address: '1AAA', classification: 'EXPOSED', pubkeyExposed: true, balanceBtc: 1, riskScore: { conservative: 10, base: 30, aggressive: 60 } }),
-  makeResult({ address: '1BBB', classification: 'SAFE_AT_REST', balanceBtc: 5, riskScore: { conservative: 1, base: 5, aggressive: 10 } }),
-  makeResult({ address: '1CCC', classification: 'EMPTY', balanceBtc: 0, riskScore: { conservative: 0, base: 0, aggressive: 0 } }),
+  makeResult({
+    address: '1AAA',
+    classification: 'EXPOSED',
+    pubkeyExposed: true,
+    balanceBtc: 1,
+    riskScore: { conservative: 10, base: 30, aggressive: 60 },
+  }),
+  makeResult({
+    address: '1BBB',
+    classification: 'SAFE_AT_REST',
+    balanceBtc: 5,
+    riskScore: { conservative: 1, base: 5, aggressive: 10 },
+  }),
+  makeResult({
+    address: '1CCC',
+    classification: 'EMPTY',
+    balanceBtc: 0,
+    riskScore: { conservative: 0, base: 0, aggressive: 0 },
+  }),
 ]
 
 describe('AddressTable', () => {

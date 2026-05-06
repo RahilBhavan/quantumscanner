@@ -29,7 +29,10 @@ export async function GET(
   const type = detectAddressType(address)
   if (type === 'UNKNOWN') {
     return NextResponse.json(
-      failure('INVALID_ADDRESS', `"${address}" is not a valid mainnet Bitcoin address.`),
+      failure(
+        'INVALID_ADDRESS',
+        `"${address}" is not a valid mainnet Bitcoin address.`
+      ),
       { status: 400, headers }
     )
   }
@@ -40,14 +43,17 @@ export async function GET(
     return NextResponse.json(success(result), { headers })
   } catch (err) {
     if (err instanceof NotFoundError) {
-      return NextResponse.json(
-        failure('NOT_FOUND', err.message),
-        { status: 404, headers }
-      )
+      return NextResponse.json(failure('NOT_FOUND', err.message), {
+        status: 404,
+        headers,
+      })
     }
     if (err instanceof UpstreamError) {
       return NextResponse.json(
-        failure('UPSTREAM_ERROR', 'Blockchain data temporarily unavailable. Please try again.'),
+        failure(
+          'UPSTREAM_ERROR',
+          'Blockchain data temporarily unavailable. Please try again.'
+        ),
         { status: 502, headers }
       )
     }

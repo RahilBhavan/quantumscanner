@@ -33,18 +33,25 @@ function riskBg(score: number): string {
 export function CrqcScenarioPanel({ scores }: CrqcScenarioPanelProps) {
   return (
     <div className="grid gap-3 sm:grid-cols-3">
-      {CRQC_SCENARIOS.map(scenario => {
+      {CRQC_SCENARIOS.map((scenario) => {
         const score = scores[scenario.id as keyof typeof scores]
         return (
-          <div key={scenario.id} className={`rounded-lg border p-4 ${riskBg(score)}`}>
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          <div
+            key={scenario.id}
+            className={`rounded-lg border p-4 ${riskBg(score)}`}
+          >
+            <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
               {scenario.label}
             </p>
-            <p className="text-xs text-muted-foreground mt-0.5">{scenario.windowLabel}</p>
-            <p className={`mt-3 text-4xl font-bold tabular-nums ${riskColor(score)}`}>
+            <p className="text-muted-foreground mt-0.5 text-xs">
+              {scenario.windowLabel}
+            </p>
+            <p
+              className={`mt-3 text-4xl font-bold tabular-nums ${riskColor(score)}`}
+            >
               {score}
             </p>
-            <p className="text-xs text-muted-foreground">/ 100 risk score</p>
+            <p className="text-muted-foreground text-xs">/ 100 risk score</p>
           </div>
         )
       })}

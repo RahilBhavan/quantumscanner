@@ -1,8 +1,4 @@
-import type {
-  Classification,
-  AddressType,
-  RecommendedAction,
-} from './types'
+import type { Classification, AddressType, RecommendedAction } from './types'
 
 export function getRecommendedAction(
   classification: Classification,

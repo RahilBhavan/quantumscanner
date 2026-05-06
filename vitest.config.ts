@@ -13,15 +13,20 @@ export default defineConfig({
       optimizer: {
         client: {
           enabled: true,
-          include: ['react', 'react-dom', '@testing-library/react', '@testing-library/user-event'],
+          include: [
+            'react',
+            'react-dom',
+            '@testing-library/react',
+            '@testing-library/user-event',
+          ],
         },
       },
     },
     coverage: {
       provider: 'v8',
       exclude: [
-        'src/components/ui/**',        // shadcn/ui boilerplate, not application logic
-        'src/app/**/page.tsx',         // RSC server pages — not runnable in jsdom
+        'src/components/ui/**', // shadcn/ui boilerplate, not application logic
+        'src/app/**/page.tsx', // RSC server pages — not runnable in jsdom
         'src/app/**/layout.tsx',
         'src/app/**/loading.tsx',
         'src/app/**/error.tsx',

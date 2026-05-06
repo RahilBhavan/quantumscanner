@@ -31,11 +31,11 @@ export function SafeAtRestCard({ result }: Props) {
       <div className="space-y-4">
         <div className="flex items-start justify-between gap-2">
           <div>
-            <p className="font-stamp text-2xl text-tag-safe leading-none">
+            <p className="font-stamp text-tag-safe text-2xl leading-none">
               {formatBtc(result.balanceBtc)} BTC
             </p>
             {result.balanceUsd !== null && (
-              <p className="font-form text-xs text-ink-faint mt-0.5">
+              <p className="font-form text-ink-faint mt-0.5 text-xs">
                 {formatUsd(result.balanceUsd)}
               </p>
             )}
@@ -43,20 +43,20 @@ export function SafeAtRestCard({ result }: Props) {
           {hasHighReuse && <HighReuseBadge />}
         </div>
 
-        <p className="font-form text-xs text-ink-dark truncate border-b border-dashed border-tag-edge/40 pb-2">
+        <p className="font-form text-ink-dark border-tag-edge/40 truncate border-b border-dashed pb-2 text-xs">
           {result.address}
         </p>
 
-        <p className="font-form text-xs text-ink-mid leading-relaxed">
+        <p className="font-form text-ink-mid text-xs leading-relaxed">
           Your public key has never appeared on the Bitcoin blockchain. A
           quantum computer cannot extract your private key from your address
           alone. Your funds are protected by hash preimage resistance.
         </p>
 
         {hasP2shNote && (
-          <p className="font-form text-xs text-ink-mid border border-tag-error/40 bg-tag-error-bg rounded p-2 leading-relaxed">
-            Note: This is a P2SH address. If it wraps a multisig or
-            non-standard script, exposure classification may differ. See{' '}
+          <p className="font-form text-ink-mid border-tag-error/40 bg-tag-error-bg rounded border p-2 text-xs leading-relaxed">
+            Note: This is a P2SH address. If it wraps a multisig or non-standard
+            script, exposure classification may differ. See{' '}
             <a href="/methodology" className="underline">
               methodology
             </a>
@@ -66,28 +66,34 @@ export function SafeAtRestCard({ result }: Props) {
 
         <RiskScoreToggle scores={result.riskScore} />
 
-        <div className="space-y-1.5 perforation pt-3 text-xs font-form">
-          <p className="font-stamp text-xs tracking-wider text-ink-dark">
+        <div className="perforation font-form space-y-1.5 pt-3 text-xs">
+          <p className="font-stamp text-ink-dark text-xs tracking-wider">
             What this means:
           </p>
-          <ul className="space-y-1 text-ink-mid">
+          <ul className="text-ink-mid space-y-1">
             <li className="flex gap-2">
-              <span aria-hidden className="text-tag-safe">✓</span>
+              <span aria-hidden className="text-tag-safe">
+                ✓
+              </span>
               Funds are currently safe from quantum attack
             </li>
             <li className="flex gap-2">
-              <span aria-hidden className="text-tag-safe">✓</span>
+              <span aria-hidden className="text-tag-safe">
+                ✓
+              </span>
               Turnstile migration can recover coins without exposing your key
             </li>
             <li className="flex gap-2">
-              <span aria-hidden className="text-tag-error">⚠</span>
+              <span aria-hidden className="text-tag-error">
+                ⚠
+              </span>
               Do not spend before migrating to a post-quantum scheme
             </li>
           </ul>
         </div>
 
-        <div className="space-y-1.5 perforation pt-3 text-xs font-form text-ink-mid">
-          <p className="font-stamp text-xs tracking-wider text-ink-dark">
+        <div className="perforation font-form text-ink-mid space-y-1.5 pt-3 text-xs">
+          <p className="font-stamp text-ink-dark text-xs tracking-wider">
             Next steps:
           </p>
           <ul className="space-y-1">

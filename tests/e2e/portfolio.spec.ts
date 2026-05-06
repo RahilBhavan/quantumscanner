@@ -25,7 +25,9 @@ test.describe('Portfolio scan flow', () => {
   })
 
   test('page renders CSV dropzone', async ({ page }) => {
-    await expect(page.getByRole('button', { name: /upload csv/i })).toBeVisible()
+    await expect(
+      page.getByRole('button', { name: /upload csv/i })
+    ).toBeVisible()
     await expect(page.getByText(/up to 1,000 bitcoin addresses/i)).toBeVisible()
   })
 
@@ -36,13 +38,19 @@ test.describe('Portfolio scan flow', () => {
     const input = page.locator('input[type="file"]')
     await input.setInputFiles(csvPath)
 
-    await expect(page.getByText(/portfolio-\d+\.csv/i)).toBeVisible({ timeout: 3_000 })
-    await expect(page.getByRole('button', { name: /scan 3 addresses/i })).toBeVisible()
+    await expect(page.getByText(/portfolio-\d+\.csv/i)).toBeVisible({
+      timeout: 3_000,
+    })
+    await expect(
+      page.getByRole('button', { name: /scan 3 addresses/i })
+    ).toBeVisible()
 
     fs.unlinkSync(csvPath)
   })
 
-  test('shows duplicate badge in preview for repeated addresses', async ({ page }) => {
+  test('shows duplicate badge in preview for repeated addresses', async ({
+    page,
+  }) => {
     const dup = VALID_ADDRESSES[0]
     const csvContent = makeCsv([dup, dup, VALID_ADDRESSES[1]])
     const csvPath = writeTmpCsv(csvContent)
@@ -54,8 +62,13 @@ test.describe('Portfolio scan flow', () => {
     fs.unlinkSync(csvPath)
   })
 
-  test('blocks CSV with more than 1000 rows and shows error', async ({ page }) => {
-    const addrs = Array.from({ length: 1002 }, (_, i) => `1${'A'.repeat(24)}${i.toString().padStart(9, '0')}`)
+  test('blocks CSV with more than 1000 rows and shows error', async ({
+    page,
+  }) => {
+    const addrs = Array.from(
+      { length: 1002 },
+      (_, i) => `1${'A'.repeat(24)}${i.toString().padStart(9, '0')}`
+    )
     const csvContent = makeCsv(addrs)
     const csvPath = writeTmpCsv(csvContent)
 
@@ -71,9 +84,13 @@ test.describe('Portfolio scan flow', () => {
     const csvPath = writeTmpCsv(csvContent)
 
     await page.locator('input[type="file"]').setInputFiles(csvPath)
-    await expect(page.getByRole('button', { name: /change file/i })).toBeVisible({ timeout: 3_000 })
+    await expect(
+      page.getByRole('button', { name: /change file/i })
+    ).toBeVisible({ timeout: 3_000 })
     await page.getByRole('button', { name: /change file/i }).click()
-    await expect(page.getByRole('button', { name: /upload csv/i })).toBeVisible()
+    await expect(
+      page.getByRole('button', { name: /upload csv/i })
+    ).toBeVisible()
 
     fs.unlinkSync(csvPath)
   })

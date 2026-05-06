@@ -41,8 +41,9 @@ describe('fetchAddressWithFallback', () => {
 
   it('falls back to esplora when mempool returns 429', async () => {
     server.use(
-      http.get(`${MEMPOOL_BASE}/address/:address`, () =>
-        new HttpResponse(null, { status: 429 })
+      http.get(
+        `${MEMPOOL_BASE}/address/:address`,
+        () => new HttpResponse(null, { status: 429 })
       ),
       http.get(`${ESPLORA_BASE}/address/:address`, () =>
         HttpResponse.json(mockAddress)
@@ -57,8 +58,9 @@ describe('fetchAddressWithFallback', () => {
 
   it('falls back to esplora when mempool returns 500', async () => {
     server.use(
-      http.get(`${MEMPOOL_BASE}/address/:address`, () =>
-        new HttpResponse(null, { status: 500 })
+      http.get(
+        `${MEMPOOL_BASE}/address/:address`,
+        () => new HttpResponse(null, { status: 500 })
       ),
       http.get(`${ESPLORA_BASE}/address/:address`, () =>
         HttpResponse.json(mockAddress)
@@ -73,11 +75,13 @@ describe('fetchAddressWithFallback', () => {
 
   it('throws UpstreamError when both providers fail', async () => {
     server.use(
-      http.get(`${MEMPOOL_BASE}/address/:address`, () =>
-        new HttpResponse(null, { status: 500 })
+      http.get(
+        `${MEMPOOL_BASE}/address/:address`,
+        () => new HttpResponse(null, { status: 500 })
       ),
-      http.get(`${ESPLORA_BASE}/address/:address`, () =>
-        new HttpResponse(null, { status: 500 })
+      http.get(
+        `${ESPLORA_BASE}/address/:address`,
+        () => new HttpResponse(null, { status: 500 })
       )
     )
     await expect(

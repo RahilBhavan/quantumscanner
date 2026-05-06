@@ -13,19 +13,19 @@ export function ScanProgressBar({ completed, total }: ScanProgressBarProps) {
       className="space-y-2"
       aria-label={`Scanning ${completed} of ${total} addresses`}
     >
-      <div className="flex justify-between items-center">
-        <span className="font-stamp text-xs tracking-[0.2em] text-ink-faint">
+      <div className="flex items-center justify-between">
+        <span className="font-stamp text-ink-faint text-xs tracking-[0.2em]">
           Processing Baggage
         </span>
-        <span className="font-form text-xs text-ink-mid tabular-nums">
+        <span className="font-form text-ink-mid text-xs tabular-nums">
           {completed} / {total}
         </span>
       </div>
 
       {/* Conveyor belt track */}
-      <div className="relative h-4 rounded border-2 border-tag-edge bg-manila overflow-hidden">
+      <div className="border-tag-edge bg-manila relative h-4 overflow-hidden rounded border-2">
         <div
-          className="h-full bg-ink-mid transition-all duration-300"
+          className="bg-ink-mid h-full transition-all duration-300"
           style={{ width: `${pct}%` }}
           role="progressbar"
           aria-valuenow={pct}
@@ -43,7 +43,7 @@ export function ScanProgressBar({ completed, total }: ScanProgressBarProps) {
         </div>
       </div>
 
-      <p className="font-form text-right text-xs text-ink-faint tabular-nums">
+      <p className="font-form text-ink-faint text-right text-xs tabular-nums">
         {pct}%
       </p>
     </div>

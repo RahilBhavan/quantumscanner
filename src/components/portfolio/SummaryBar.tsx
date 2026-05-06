@@ -17,13 +17,18 @@ interface StatBlockProps {
   border?: string
 }
 
-function StatBlock({ label, value, ink = 'text-ink-dark', border = 'border-tag-edge' }: StatBlockProps) {
+function StatBlock({
+  label,
+  value,
+  ink = 'text-ink-dark',
+  border = 'border-tag-edge',
+}: StatBlockProps) {
   return (
     <div className={`rounded-lg border-2 ${border} bg-manila p-4 text-center`}>
       <p className={`font-stamp text-3xl leading-none ${ink} tabular-nums`}>
         {value}
       </p>
-      <p className="font-form text-xs text-ink-faint mt-1 tracking-wider uppercase">
+      <p className="font-form text-ink-faint mt-1 text-xs tracking-wider uppercase">
         {label}
       </p>
     </div>
@@ -73,18 +78,18 @@ export function SummaryBar({
       </div>
 
       {/* BTC exposure bar */}
-      <div className="rounded-lg border-2 border-tag-edge bg-manila p-4">
-        <div className="mb-2 flex justify-between items-center">
-          <span className="font-stamp text-xs tracking-[0.2em] text-ink-faint">
+      <div className="border-tag-edge bg-manila rounded-lg border-2 p-4">
+        <div className="mb-2 flex items-center justify-between">
+          <span className="font-stamp text-ink-faint text-xs tracking-[0.2em]">
             BTC Exposure
           </span>
-          <span className="font-form text-xs text-ink-mid tabular-nums">
+          <span className="font-form text-ink-mid text-xs tabular-nums">
             {exposedBtc.toFixed(4)} / {totalBtc.toFixed(4)} BTC ({exposurePct}%)
           </span>
         </div>
-        <div className="h-3 rounded border border-tag-edge bg-parchment overflow-hidden">
+        <div className="border-tag-edge bg-parchment h-3 overflow-hidden rounded border">
           <div
-            className="h-full bg-tag-exposed transition-all"
+            className="bg-tag-exposed h-full transition-all"
             style={{ width: `${exposurePct}%` }}
             aria-label={`${exposurePct}% of BTC exposed`}
           />

@@ -16,7 +16,12 @@ export function classifyAddress(facts: AddressFacts): ClassificationResult {
   }
 
   if (type === 'UNKNOWN') {
-    return { classification: 'UNRESOLVABLE', pubkeyExposed: false, flags, notes }
+    return {
+      classification: 'UNRESOLVABLE',
+      pubkeyExposed: false,
+      flags,
+      notes,
+    }
   }
 
   if (type === 'P2TR' || type === 'P2PK') {

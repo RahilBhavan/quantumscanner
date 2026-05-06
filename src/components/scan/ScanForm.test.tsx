@@ -39,7 +39,9 @@ describe('ScanForm', () => {
 
   it('renders address input and submit button', async () => {
     await renderAsync(<ScanForm />)
-    expect(screen.getByRole('textbox', { name: /bitcoin address/i })).toBeDefined()
+    expect(
+      screen.getByRole('textbox', { name: /bitcoin address/i })
+    ).toBeDefined()
     expect(screen.getByRole('button', { name: /scan address/i })).toBeDefined()
   })
 
@@ -71,9 +73,7 @@ describe('ScanForm', () => {
     await renderAsync(<ScanForm />)
     await user.type(screen.getByRole('textbox'), VALID_ADDRESS)
     await user.click(screen.getByRole('button', { name: /scan address/i }))
-    await waitFor(() =>
-      expect(screen.getByText(/safe at rest/i)).toBeDefined()
-    )
+    await waitFor(() => expect(screen.getByText(/safe at rest/i)).toBeDefined())
   })
 
   it('renders error state when API call fails', async () => {

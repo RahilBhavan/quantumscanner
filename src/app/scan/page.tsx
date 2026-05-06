@@ -10,10 +10,8 @@ export const metadata = {
 export default function ScanPage() {
   return (
     <main className="mx-auto max-w-2xl px-4 py-12">
-      <h1 className="font-stamp text-5xl text-ink-dark mb-1">
-        Issue Scan Tag
-      </h1>
-      <p className="font-form text-ink-mid text-sm mb-8">
+      <h1 className="font-stamp text-ink-dark mb-1 text-5xl">Issue Scan Tag</h1>
+      <p className="font-form text-ink-mid mb-8 text-sm">
         Enter any mainnet Bitcoin address to check its quantum exposure
         classification, current balance, and CRQC risk score.
       </p>

@@ -14,13 +14,13 @@ describe('validateCsvRows', () => {
       row('bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4'),
     ]
     const result = validateCsvRows(rows)
-    expect(result.every(r => r.isValid)).toBe(true)
+    expect(result.every((r) => r.isValid)).toBe(true)
   })
 
   it('marks obviously invalid addresses as invalid', () => {
     const rows = [row('notanaddress'), row(''), row('1invalidchecksum')]
     const result = validateCsvRows(rows)
-    expect(result.every(r => !r.isValid)).toBe(true)
+    expect(result.every((r) => !r.isValid)).toBe(true)
   })
 
   it('includes the detected address type for valid addresses', () => {

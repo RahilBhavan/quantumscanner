@@ -101,19 +101,14 @@ export function BaggageTag({
       )}
 
       {showHole && (
-        <div
-          aria-hidden="true"
-          className="relative z-10 -mb-2.5"
-        >
-          <div
-            className="w-5 h-5 rounded-full bg-parchment border-2 border-tag-hole shadow-inner"
-          />
+        <div aria-hidden="true" className="relative z-10 -mb-2.5">
+          <div className="bg-parchment border-tag-hole h-5 w-5 rounded-full border-2 shadow-inner" />
         </div>
       )}
 
       <div
         className={cn(
-          'rounded-xl border-2 shadow-tag overflow-hidden',
+          'shadow-tag overflow-hidden rounded-xl border-2',
           v.bg,
           v.border,
           s.container
@@ -122,7 +117,7 @@ export function BaggageTag({
         {/* Destination header */}
         <div
           className={cn(
-            'relative border-b-2 border-dashed border-tag-edge/50',
+            'border-tag-edge/50 relative border-b-2 border-dashed',
             s.padding,
             showHole && 'pt-5'
           )}
@@ -131,14 +126,14 @@ export function BaggageTag({
             {destination}
           </div>
           {subLabel && (
-            <div className="font-form text-xs tracking-[0.2em] uppercase mt-1 opacity-60">
+            <div className="font-form mt-1 text-xs tracking-[0.2em] uppercase opacity-60">
               {subLabel}
             </div>
           )}
           {badge && (
             <span
               aria-hidden="true"
-              className="absolute top-3 right-3 font-stamp text-xs border-2 border-stamp-red text-stamp-red px-1.5 py-0.5 tracking-widest -rotate-12 opacity-85"
+              className="font-stamp border-stamp-red text-stamp-red absolute top-3 right-3 -rotate-12 border-2 px-1.5 py-0.5 text-xs tracking-widest opacity-85"
             >
               {badge}
             </span>

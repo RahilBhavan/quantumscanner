@@ -1,4 +1,12 @@
-import { describe, it, expect, beforeAll, afterAll, afterEach, vi } from 'vitest'
+import {
+  describe,
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  afterEach,
+  vi,
+} from 'vitest'
 import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
 import { fetchBtcPrice } from './price-client'
@@ -26,8 +34,9 @@ describe('fetchBtcPrice', () => {
 
   it('returns null on 500 error (graceful degradation)', async () => {
     server.use(
-      http.get(`${COINGECKO_BASE}/simple/price`, () =>
-        new HttpResponse(null, { status: 500 })
+      http.get(
+        `${COINGECKO_BASE}/simple/price`,
+        () => new HttpResponse(null, { status: 500 })
       )
     )
     const price = await fetchBtcPrice(COINGECKO_BASE)
@@ -36,10 +45,12 @@ describe('fetchBtcPrice', () => {
 
   it('returns null on malformed JSON (graceful degradation)', async () => {
     server.use(
-      http.get(`${COINGECKO_BASE}/simple/price`, () =>
-        new HttpResponse('bad json', {
-          headers: { 'Content-Type': 'application/json' },
-        })
+      http.get(
+        `${COINGECKO_BASE}/simple/price`,
+        () =>
+          new HttpResponse('bad json', {
+            headers: { 'Content-Type': 'application/json' },
+          })
       )
     )
     const price = await fetchBtcPrice(COINGECKO_BASE)

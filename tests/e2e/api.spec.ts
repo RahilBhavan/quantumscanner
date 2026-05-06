@@ -11,8 +11,12 @@ test.describe('Public API', () => {
     expect(body.ok).toBe(true)
   })
 
-  test('GET /api/v1/address/:address returns valid schema for P2PKH', async ({ request }) => {
-    const res = await request.get(`/api/v1/address/${GENESIS}`, { timeout: 15_000 })
+  test('GET /api/v1/address/:address returns valid schema for P2PKH', async ({
+    request,
+  }) => {
+    const res = await request.get(`/api/v1/address/${GENESIS}`, {
+      timeout: 15_000,
+    })
     expect(res.ok()).toBe(true)
     const body = await res.json()
     expect(body).toMatchObject({
@@ -29,7 +33,9 @@ test.describe('Public API', () => {
     })
   })
 
-  test('GET /api/v1/address/:address returns 400 for invalid address', async ({ request }) => {
+  test('GET /api/v1/address/:address returns 400 for invalid address', async ({
+    request,
+  }) => {
     const res = await request.get(`/api/v1/address/${GARBAGE}`)
     expect(res.status()).toBe(400)
     const body = await res.json()
@@ -37,13 +43,19 @@ test.describe('Public API', () => {
     expect(body.error).toBeDefined()
   })
 
-  test('X-RateLimit-* headers present on single address response', async ({ request }) => {
-    const res = await request.get(`/api/v1/address/${GENESIS}`, { timeout: 15_000 })
+  test('X-RateLimit-* headers present on single address response', async ({
+    request,
+  }) => {
+    const res = await request.get(`/api/v1/address/${GENESIS}`, {
+      timeout: 15_000,
+    })
     expect(res.headers()['x-ratelimit-limit']).toBeDefined()
     expect(res.headers()['x-ratelimit-remaining']).toBeDefined()
   })
 
-  test('POST /api/v1/portfolio returns 400 for more than 100 addresses', async ({ request }) => {
+  test('POST /api/v1/portfolio returns 400 for more than 100 addresses', async ({
+    request,
+  }) => {
     const addresses = Array.from({ length: 101 }, () => GENESIS)
     const res = await request.post('/api/v1/portfolio', {
       data: { addresses },
@@ -53,7 +65,9 @@ test.describe('Public API', () => {
     expect(body.ok).toBe(false)
   })
 
-  test('POST /api/v1/portfolio returns 400 for empty body', async ({ request }) => {
+  test('POST /api/v1/portfolio returns 400 for empty body', async ({
+    request,
+  }) => {
     const res = await request.post('/api/v1/portfolio', {
       data: {},
     })

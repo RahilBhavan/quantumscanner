@@ -28,7 +28,9 @@ export async function fetchAddressFacts(
 ): Promise<FetchedAddressFacts> {
   let response: Response
   try {
-    response = await fetchWithTimeout(`${baseUrl}/address/${encodeURIComponent(address)}`)
+    response = await fetchWithTimeout(
+      `${baseUrl}/address/${encodeURIComponent(address)}`
+    )
   } catch (err) {
     throw new UpstreamError(`Network error fetching ${address}: ${err}`)
   }
@@ -36,7 +38,10 @@ export async function fetchAddressFacts(
   if (response.status === 404) throw new NotFoundError(address)
   if (response.status === 429) throw new RateLimitError()
   if (!response.ok) {
-    throw new UpstreamError(`Upstream ${response.status} for ${address}`, response.status)
+    throw new UpstreamError(
+      `Upstream ${response.status} for ${address}`,
+      response.status
+    )
   }
 
   let raw: unknown
