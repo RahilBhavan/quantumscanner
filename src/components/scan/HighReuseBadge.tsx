@@ -1,9 +1,7 @@
-import { Badge } from '@/components/ui/badge'
-
 export function HighReuseBadge() {
   return (
-    <Badge variant="outline" className="text-amber-600 border-amber-400">
+    <span className="font-stamp text-xs tracking-wider border-2 border-tag-error/60 text-tag-error px-1.5 py-0.5 rounded whitespace-nowrap">
       High reuse — 100+ transactions
-    </Badge>
+    </span>
   )
 }

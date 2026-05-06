@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { BaggageTag } from '@/components/ui/BaggageTag'
 import { RiskScoreToggle } from './RiskScoreToggle'
 import { HighReuseBadge } from './HighReuseBadge'
 import type { AddressResult } from '@/lib/api/resolve-address'
@@ -15,7 +15,11 @@ function formatBtc(btc: number) {
 }
 
 function formatUsd(usd: number) {
-  return usd.toLocaleString(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
+  return usd.toLocaleString(undefined, {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 0,
+  })
 }
 
 export function ExposedCard({ result }: Props) {
@@ -23,58 +27,79 @@ export function ExposedCard({ result }: Props) {
   const isP2tr = result.type === 'P2TR'
 
   return (
-    <Card className="border-red-200 bg-red-50 dark:bg-red-950/20">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-red-700 dark:text-red-400">
-          <span aria-hidden>🔴</span>
-          <span>Exposed</span>
+    <BaggageTag
+      variant="exposed"
+      destination="Exposed"
+      subLabel="Quantum Risk"
+      badge="Priority"
+    >
+      <div className="space-y-4">
+        <div className="flex items-start justify-between gap-2">
+          <div>
+            <p className="font-stamp text-2xl text-tag-exposed leading-none">
+              {formatBtc(result.balanceBtc)} BTC
+            </p>
+            {result.balanceUsd !== null && (
+              <p className="font-form text-xs text-ink-faint mt-0.5">
+                {formatUsd(result.balanceUsd)}
+              </p>
+            )}
+          </div>
           {hasHighReuse && <HighReuseBadge />}
-        </CardTitle>
-        <p className="text-sm text-muted-foreground font-mono truncate">{result.address}</p>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div>
-          <p className="text-2xl font-bold">{formatBtc(result.balanceBtc)} BTC</p>
-          {result.balanceUsd !== null && (
-            <p className="text-muted-foreground">{formatUsd(result.balanceUsd)}</p>
-          )}
         </div>
 
+        <p className="font-form text-xs text-ink-dark truncate border-b border-dashed border-tag-edge/40 pb-2">
+          {result.address}
+        </p>
+
         {isP2tr ? (
-          <p className="text-sm">
-            This is a Taproot (P2TR) address. The x-only public key is embedded in
-            the output script and is visible on-chain from the moment funds were
-            received — no spend required for exposure.
+          <p className="font-form text-xs text-ink-mid leading-relaxed">
+            This is a Taproot (P2TR) address. The x-only public key is embedded
+            in the output script and is visible on-chain from the moment funds
+            were received — no spend required for exposure.
           </p>
         ) : (
-          <p className="text-sm">
+          <p className="font-form text-xs text-ink-mid leading-relaxed">
             Your public key appeared on the Bitcoin blockchain
-            {result.lastSpend ? ` on ${result.lastSpend}` : ''}.
-            A sufficiently powerful quantum computer could derive your private key
+            {result.lastSpend ? ` on ${result.lastSpend}` : ''}. A
+            sufficiently powerful quantum computer could derive your private key
             from this public key using Shor&apos;s algorithm.
           </p>
         )}
 
         <RiskScoreToggle scores={result.riskScore} />
 
-        <div className="space-y-1 text-sm">
-          <p className="font-medium">What this means for you:</p>
+        <div className="space-y-1.5 perforation pt-3 text-xs font-form">
+          <p className="font-stamp text-xs tracking-wider text-ink-dark">
+            What this means:
+          </p>
           <ul className="space-y-1">
-            <li className="flex gap-2 text-red-600"><span aria-hidden>✗</span> This address is NOT protected by hash commitments</li>
-            <li className="flex gap-2 text-red-600"><span aria-hidden>✗</span> Once a CRQC exists, this private key can be computed in hours</li>
-            <li className="flex gap-2 text-red-600"><span aria-hidden>✗</span> The "turnstile" migration does NOT apply to this address</li>
+            <li className="flex gap-2 text-tag-exposed">
+              <span aria-hidden>✗</span>
+              This address is NOT protected by hash commitments
+            </li>
+            <li className="flex gap-2 text-tag-exposed">
+              <span aria-hidden>✗</span>
+              Once a CRQC exists, this private key can be computed in hours
+            </li>
+            <li className="flex gap-2 text-tag-exposed">
+              <span aria-hidden>✗</span>
+              The &ldquo;turnstile&rdquo; migration does NOT apply here
+            </li>
           </ul>
         </div>
 
-        <div className="space-y-1 text-sm border-t pt-3">
-          <p className="font-medium">Next steps:</p>
+        <div className="space-y-1.5 perforation pt-3 text-xs font-form text-ink-mid">
+          <p className="font-stamp text-xs tracking-wider text-ink-dark">
+            Next steps:
+          </p>
           <ul className="space-y-1">
-            <li>☐ Move funds to a new address that has never been spent from</li>
-            <li>☐ Never sign another transaction from the new address until migrating to a post-quantum scheme</li>
-            <li>☐ Track the QBIP Phase A timeline — proactive migration must happen before a CRQC exists</li>
+            <li>☐ Move funds to a new address never spent from</li>
+            <li>☐ Never sign from the new address until migrating to PQC</li>
+            <li>☐ Track the QBIP Phase A timeline — migrate before CRQC</li>
           </ul>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </BaggageTag>
   )
 }

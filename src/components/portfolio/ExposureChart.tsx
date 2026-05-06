@@ -10,6 +10,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts'
+import { TAG_COLORS } from '@/components/ui/BaggageTag'
 
 interface ExposureChartProps {
   safe: number
@@ -18,27 +19,71 @@ interface ExposureChartProps {
   unresolvable: number
 }
 
-export function ExposureChart({ safe, exposed, empty, unresolvable }: ExposureChartProps) {
-  const data = [
-    { name: 'Portfolio', safe, exposed, empty, unresolvable },
-  ]
+export function ExposureChart({
+  safe,
+  exposed,
+  empty,
+  unresolvable,
+}: ExposureChartProps) {
+  const data = [{ name: 'Portfolio', safe, exposed, empty, unresolvable }]
 
   return (
-    <div className="rounded-lg border p-4">
-      <h3 className="mb-4 text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+    <div className="rounded-xl border-2 border-tag-edge bg-manila p-4">
+      <h3 className="font-stamp text-sm tracking-[0.2em] text-ink-faint mb-4">
         Address Classification Breakdown
       </h3>
       <ResponsiveContainer width="100%" height={200}>
         <BarChart data={data} layout="vertical" margin={{ left: 16 }}>
-          <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-          <XAxis type="number" />
+          <CartesianGrid
+            strokeDasharray="4 4"
+            horizontal={false}
+            stroke="#B8A882"
+          />
+          <XAxis
+            type="number"
+            tick={{ fontFamily: 'var(--font-courier-prime)', fontSize: 11, fill: '#9E8E75' }}
+          />
           <YAxis type="category" dataKey="name" hide />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="exposed" name="Exposed" fill="#ef4444" stackId="a" radius={[0, 0, 0, 0]} />
-          <Bar dataKey="safe" name="Safe at Rest" fill="#10b981" stackId="a" />
-          <Bar dataKey="empty" name="Empty" fill="#94a3b8" stackId="a" />
-          <Bar dataKey="unresolvable" name="Unresolvable" fill="#f59e0b" stackId="a" radius={[0, 4, 4, 0]} />
+          <Tooltip
+            contentStyle={{
+              background: '#EDE8DA',
+              border: '1px solid #B8A882',
+              fontFamily: 'var(--font-courier-prime)',
+              fontSize: 12,
+            }}
+          />
+          <Legend
+            wrapperStyle={{
+              fontFamily: 'var(--font-courier-prime)',
+              fontSize: 12,
+              color: '#5C4F3A',
+            }}
+          />
+          <Bar
+            dataKey="exposed"
+            name="Exposed"
+            fill={TAG_COLORS.exposed}
+            stackId="a"
+          />
+          <Bar
+            dataKey="safe"
+            name="Safe at Rest"
+            fill={TAG_COLORS.safe}
+            stackId="a"
+          />
+          <Bar
+            dataKey="empty"
+            name="Empty"
+            fill={TAG_COLORS.empty}
+            stackId="a"
+          />
+          <Bar
+            dataKey="unresolvable"
+            name="Unresolvable"
+            fill={TAG_COLORS.error}
+            stackId="a"
+            radius={[0, 4, 4, 0]}
+          />
         </BarChart>
       </ResponsiveContainer>
     </div>

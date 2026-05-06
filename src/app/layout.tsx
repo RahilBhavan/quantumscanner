@@ -1,22 +1,25 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Bebas_Neue, Courier_Prime } from 'next/font/google'
 import Link from 'next/link'
-import { Shield } from 'lucide-react'
+import { Tag } from 'lucide-react'
 import './globals.css'
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const bebasNeue = Bebas_Neue({
+  weight: '400',
+  variable: '--font-bebas-neue',
   subsets: ['latin'],
 })
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const courierPrime = Courier_Prime({
+  weight: ['400', '700'],
+  variable: '--font-courier-prime',
   subsets: ['latin'],
 })
 
 export const metadata: Metadata = {
   title: 'Bitcoin Quantum Exposure Scanner',
-  description: 'Check your Bitcoin addresses for quantum computer vulnerability.',
+  description:
+    'Check your Bitcoin addresses for quantum computer vulnerability.',
 }
 
 const NAV_LINKS = [
@@ -30,21 +33,37 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col">
-        <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
-          <div className="container mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
-            <Link href="/" className="flex items-center gap-2 font-semibold">
-              <Shield className="h-5 w-5 text-primary" />
-              <span>QuantumScanner</span>
+    <html
+      lang="en"
+      className={`${bebasNeue.variable} ${courierPrime.variable} h-full`}
+    >
+      <body className="flex min-h-full flex-col bg-parchment">
+        <header className="sticky top-0 z-40 border-b-2 border-tag-edge bg-aged">
+          <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
+            <Link
+              href="/"
+              className="flex items-center gap-2 text-ink-dark hover:text-ink-mid transition-colors"
+            >
+              <Tag className="h-5 w-5" />
+              <span className="font-stamp text-xl leading-none">
+                Quantum Scanner
+              </span>
             </Link>
             <nav aria-label="Main navigation">
-              <ul className="flex items-center gap-1">
-                {NAV_LINKS.map(link => (
-                  <li key={link.href}>
+              <ul className="flex items-center gap-0">
+                {NAV_LINKS.map((link, i) => (
+                  <li key={link.href} className="flex items-center">
+                    {i > 0 && (
+                      <span
+                        className="select-none px-1 text-ink-faint font-form text-sm"
+                        aria-hidden="true"
+                      >
+                        ·
+                      </span>
+                    )}
                     <Link
                       href={link.href}
-                      className="rounded-md px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                      className="font-stamp text-sm text-ink-mid hover:text-ink-dark px-2 py-1 transition-colors"
                     >
                       {link.label}
                     </Link>
@@ -54,20 +73,29 @@ export default function RootLayout({
             </nav>
           </div>
         </header>
+
         <div className="flex flex-1 flex-col">{children}</div>
-        <footer className="border-t py-6 text-center text-xs text-muted-foreground">
-          <p>
-            MIT License · Open source on{' '}
+
+        <footer className="bg-aged perforation py-5 text-center">
+          <p className="font-form text-xs text-ink-faint tracking-widest uppercase">
+            MIT License{' '}
+            <span aria-hidden="true">·</span>{' '}
+            Open source on{' '}
             <a
               href="https://github.com/rahil1206/quantum-scanner"
-              className="hover:underline"
+              className="text-ink-mid hover:text-ink-dark underline transition-colors"
               target="_blank"
               rel="noopener noreferrer"
             >
               GitHub
             </a>{' '}
-            · No personal data stored ·{' '}
-            <Link href="/methodology" className="hover:underline">
+            <span aria-hidden="true">·</span>{' '}
+            No personal data stored{' '}
+            <span aria-hidden="true">·</span>{' '}
+            <Link
+              href="/methodology"
+              className="text-ink-mid hover:text-ink-dark underline transition-colors"
+            >
               Methodology
             </Link>
           </p>

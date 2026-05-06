@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { BaggageTag } from '@/components/ui/BaggageTag'
 import type { AddressResult } from '@/lib/api/resolve-address'
 
 interface Props {
@@ -7,25 +7,23 @@ interface Props {
 
 export function EmptyCard({ result }: Props) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-muted-foreground">
-          <span aria-hidden>⚪</span>
-          <span>Empty — No funds at risk</span>
-        </CardTitle>
-        <p className="text-sm text-muted-foreground font-mono truncate">{result.address}</p>
-      </CardHeader>
-      <CardContent>
-        <p className="text-sm">
-          This address has no UTXO balance. Classification is shown for completeness.
+    <BaggageTag variant="empty" destination="Empty" subLabel="No Funds at Risk">
+      <div className="space-y-3">
+        <p className="font-form text-xs text-ink-dark truncate border-b border-dashed border-tag-edge/40 pb-2">
+          {result.address}
         </p>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Address type: <strong>{result.type}</strong> &middot;{' '}
+        <p className="font-form text-xs text-ink-mid leading-relaxed">
+          This address has no UTXO balance. Classification is shown for
+          completeness.
+        </p>
+        <p className="font-form text-xs text-ink-faint">
+          Address type: <strong className="text-ink-mid">{result.type}</strong>{' '}
+          &middot;{' '}
           {result.pubkeyExposed
             ? 'Public key has been exposed on-chain.'
             : 'Public key has not been exposed.'}
         </p>
-      </CardContent>
-    </Card>
+      </div>
+    </BaggageTag>
   )
 }

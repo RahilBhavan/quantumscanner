@@ -1,7 +1,6 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import { BaggageTag } from '@/components/ui/BaggageTag'
 
 interface Props {
   address: string
@@ -10,28 +9,27 @@ interface Props {
 
 export function UnresolvableCard({ address, onRetry }: Props) {
   return (
-    <Card className="border-amber-200 bg-amber-50 dark:bg-amber-950/20">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-amber-700 dark:text-amber-400">
-          <span aria-hidden>⚠️</span>
-          <span>Unresolvable</span>
-        </CardTitle>
-        <p className="text-sm text-muted-foreground font-mono truncate">{address}</p>
-      </CardHeader>
-      <CardContent className="space-y-3">
-        <p className="text-sm">
-          This address format was not recognized, or blockchain data could not be
-          fetched. Manual review is required.
+    <BaggageTag variant="error" destination="Error" subLabel="Unresolvable">
+      <div className="space-y-3">
+        <p className="font-form text-xs text-ink-dark truncate border-b border-dashed border-tag-edge/40 pb-2">
+          {address}
         </p>
-        <p className="text-xs text-muted-foreground">
-          If this persists, you can check directly on{' '}
+        <p className="font-form text-xs text-ink-mid leading-relaxed">
+          This address format was not recognized, or blockchain data could not
+          be fetched. Manual review is required.
+        </p>
+        <p className="font-form text-xs text-ink-faint leading-relaxed">
+          If this persists, check directly on{' '}
           <span className="underline">mempool.space</span> or{' '}
           <span className="underline">blockstream.info</span>.
         </p>
-        <Button variant="outline" size="sm" onClick={onRetry}>
+        <button
+          onClick={onRetry}
+          className="font-stamp text-xs tracking-wider border-2 border-tag-edge text-ink-mid px-3 py-1.5 rounded hover:bg-manila transition-colors"
+        >
           Try again
-        </Button>
-      </CardContent>
-    </Card>
+        </button>
+      </div>
+    </BaggageTag>
   )
 }

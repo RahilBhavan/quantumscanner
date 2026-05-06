@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { GitFork, BookOpen, Shield } from 'lucide-react'
+import { GitFork, BookOpen, Tag } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'About — Bitcoin Quantum Exposure Scanner',
@@ -11,63 +11,84 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <main className="container mx-auto max-w-3xl px-4 py-12">
-      <h1 className="text-3xl font-bold tracking-tight">About</h1>
+      <h1 className="font-stamp text-6xl text-ink-dark">About</h1>
 
-      <div className="mt-8 space-y-8">
+      <div className="mt-8 space-y-10">
         <section>
-          <h2 className="text-xl font-semibold">Why This Tool Exists</h2>
-          <p className="mt-3 text-muted-foreground leading-relaxed">
-            The Bitcoin ecosystem lacks a simple, public tool that surfaces <em>which specific
-            addresses</em> are quantum-vulnerable — not just whether the threat is theoretical.
-            Most quantum-risk discussions are abstract; this scanner makes them concrete by
-            classifying each address against on-chain data.
+          <h2 className="font-stamp text-2xl text-ink-dark border-b-2 border-dashed border-tag-edge pb-1 mb-4">
+            Why This Tool Exists
+          </h2>
+          <p className="font-form text-sm text-ink-mid leading-relaxed">
+            The Bitcoin ecosystem lacks a simple, public tool that surfaces{' '}
+            <em>which specific addresses</em> are quantum-vulnerable — not just
+            whether the threat is theoretical. Most quantum-risk discussions are
+            abstract; this scanner makes them concrete by classifying each
+            address against on-chain data.
           </p>
-          <p className="mt-3 text-muted-foreground leading-relaxed">
-            This project was built to support a Substack research series on Bitcoin&apos;s
-            quantum transition. The goal is to give individual holders and institutional custodians
-            the information they need to prioritize migration work before a cryptographically-relevant
+          <p className="font-form text-sm text-ink-mid mt-3 leading-relaxed">
+            This project was built to support a Substack research series on
+            Bitcoin&apos;s quantum transition. The goal is to give individual
+            holders and institutional custodians the information they need to
+            prioritize migration work before a cryptographically-relevant
             quantum computer (CRQC) arrives.
           </p>
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold">Methodology Reference</h2>
-          <div className="mt-3 rounded-lg border bg-muted/30 p-4">
-            <p className="text-sm font-medium">
+          <h2 className="font-stamp text-2xl text-ink-dark border-b-2 border-dashed border-tag-edge pb-1 mb-4">
+            Methodology Reference
+          </h2>
+          <div className="bg-manila border-2 border-tag-edge rounded-xl p-4">
+            <p className="font-form text-sm text-ink-dark leading-relaxed">
               Ray, A., Gautam, K., &amp; Ryan, M. (2026).{' '}
-              <em>Quantum Threat Assessment for Public-Key Cryptographic Infrastructure.</em>{' '}
+              <em>
+                Quantum Threat Assessment for Public-Key Cryptographic
+                Infrastructure.
+              </em>{' '}
               Proceedings of the IEEE Symposium on Security and Privacy.
             </p>
-            <p className="mt-2 text-xs text-muted-foreground">
-              The CRQC timeline scenarios and risk score formula in this tool are based on the
-              framework formalized in this paper. This tool is independent research and is not
-              endorsed by the paper&apos;s authors.
+            <p className="font-form text-xs text-ink-faint mt-2 leading-relaxed">
+              The CRQC timeline scenarios and risk score formula in this tool
+              are based on the framework formalized in this paper. This tool is
+              independent research and is not endorsed by the paper&apos;s
+              authors.
             </p>
           </div>
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold">Technical Stack</h2>
-          <ul className="mt-3 space-y-1 text-sm text-muted-foreground list-disc list-inside">
-            <li>Next.js App Router · TypeScript · Tailwind CSS</li>
-            <li>shadcn/ui components · Recharts for portfolio charts</li>
-            <li>Papa Parse for CSV handling · bitcoin-address-validation for type detection</li>
-            <li>mempool.space primary API · Blockstream Esplora fallback</li>
-            <li>CoinGecko for BTC/USD price · Vercel KV for live counters</li>
-            <li>Vitest + Testing Library (91 unit tests, ≥80% coverage) · Playwright E2E</li>
+          <h2 className="font-stamp text-2xl text-ink-dark border-b-2 border-dashed border-tag-edge pb-1 mb-4">
+            Technical Stack
+          </h2>
+          <ul className="font-form text-sm text-ink-mid space-y-1.5">
+            {[
+              'Next.js App Router · TypeScript · Tailwind CSS',
+              'shadcn/ui components · Recharts for portfolio charts',
+              'Papa Parse for CSV handling · bitcoin-address-validation for type detection',
+              'mempool.space primary API · Blockstream Esplora fallback',
+              'CoinGecko for BTC/USD price · Vercel KV for live counters',
+              'Vitest + Testing Library · Playwright E2E',
+            ].map((item) => (
+              <li key={item} className="flex gap-2">
+                <span aria-hidden className="text-ink-faint select-none">·</span>
+                {item}
+              </li>
+            ))}
           </ul>
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold">Open Source</h2>
-          <p className="mt-3 text-muted-foreground leading-relaxed">
-            This project is released under the MIT License. Contributions, bug reports, and
-            pull requests are welcome.
+          <h2 className="font-stamp text-2xl text-ink-dark border-b-2 border-dashed border-tag-edge pb-1 mb-4">
+            Open Source
+          </h2>
+          <p className="font-form text-sm text-ink-mid leading-relaxed">
+            This project is released under the MIT License. Contributions, bug
+            reports, and pull requests are welcome.
           </p>
           <div className="mt-4 flex flex-wrap gap-3">
             <a
               href="https://github.com/rahil1206/quantum-scanner"
-              className="inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium hover:bg-muted"
+              className="font-stamp text-xs tracking-wider inline-flex items-center gap-2 rounded-lg border-2 border-tag-edge bg-manila px-4 py-2 text-ink-mid hover:text-ink-dark hover:border-ink-mid transition-colors"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -76,30 +97,34 @@ export default function AboutPage() {
             </a>
             <Link
               href="/methodology"
-              className="inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium hover:bg-muted"
+              className="font-stamp text-xs tracking-wider inline-flex items-center gap-2 rounded-lg border-2 border-tag-edge bg-manila px-4 py-2 text-ink-mid hover:text-ink-dark hover:border-ink-mid transition-colors"
             >
               <BookOpen className="h-4 w-4" />
               Read the Methodology
             </Link>
             <Link
               href="/scan"
-              className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/80"
+              className="font-stamp text-xs tracking-wider inline-flex items-center gap-2 rounded-lg bg-ink-dark text-parchment px-4 py-2 hover:bg-ink-mid transition-colors"
             >
-              <Shield className="h-4 w-4" />
+              <Tag className="h-4 w-4" />
               Scan an Address
             </Link>
           </div>
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold">Disclaimer</h2>
-          <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-            This tool is provided for informational purposes only. It is not financial advice.
-            Classifications and risk scores are based on publicly available on-chain data and
-            probabilistic models of CRQC development timelines. No warranty is made regarding
-            accuracy. Always verify critical decisions with a qualified security professional.
+          <h2 className="font-stamp text-2xl text-ink-dark border-b-2 border-dashed border-tag-edge pb-1 mb-4">
+            Disclaimer
+          </h2>
+          <p className="font-form text-xs text-ink-mid leading-relaxed">
+            This tool is provided for informational purposes only. It is not
+            financial advice. Classifications and risk scores are based on
+            publicly available on-chain data and probabilistic models of CRQC
+            development timelines. No warranty is made regarding accuracy.
+            Always verify critical decisions with a qualified security
+            professional.
           </p>
-          <p className="mt-2 text-xs text-muted-foreground">
+          <p className="font-form text-xs text-ink-faint mt-3 tracking-wider">
             MIT License · Copyright 2026 Rahil Bhavan
           </p>
         </section>

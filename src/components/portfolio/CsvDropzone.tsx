@@ -1,7 +1,6 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { UploadCloud } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { MAX_ROWS } from '@/lib/csv/parse'
 
@@ -32,22 +31,31 @@ export function CsvDropzone({ onFile, disabled }: CsvDropzoneProps) {
       aria-label="Upload CSV file"
       aria-disabled={disabled}
       onClick={() => !disabled && inputRef.current?.click()}
-      onKeyDown={e => {
+      onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') inputRef.current?.click()
       }}
-      onDragOver={e => { e.preventDefault(); setDragging(true) }}
+      onDragOver={(e) => {
+        e.preventDefault()
+        setDragging(true)
+      }}
       onDragLeave={() => setDragging(false)}
       onDrop={onDrop}
       className={cn(
-        'flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-12 text-center transition-colors cursor-pointer',
-        dragging ? 'border-primary bg-primary/5' : 'border-muted-foreground/30 hover:border-primary/50',
+        'flex cursor-pointer flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed p-14 text-center transition-colors',
+        dragging
+          ? 'border-ink-dark bg-manila'
+          : 'border-tag-edge hover:border-ink-mid hover:bg-manila/50',
         disabled && 'pointer-events-none opacity-50'
       )}
     >
-      <UploadCloud className="h-10 w-10 text-muted-foreground" />
+      <p className="font-stamp text-4xl text-ink-dark leading-none">
+        Drop Luggage Here
+      </p>
       <div>
-        <p className="font-medium">Drop your CSV here or click to browse</p>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="font-form text-sm text-ink-mid">
+          Drop your CSV here or click to browse
+        </p>
+        <p className="font-form text-xs text-ink-faint mt-1">
           Up to {MAX_ROWS.toLocaleString()} Bitcoin addresses · .csv format
         </p>
       </div>
@@ -56,7 +64,7 @@ export function CsvDropzone({ onFile, disabled }: CsvDropzoneProps) {
         type="file"
         accept=".csv,text/csv"
         className="sr-only"
-        onChange={e => handleFile(e.target.files?.[0])}
+        onChange={(e) => handleFile(e.target.files?.[0])}
       />
     </div>
   )

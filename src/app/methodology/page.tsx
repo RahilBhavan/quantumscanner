@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { CRQC_SCENARIOS } from '@/lib/risk/scenarios'
-import { RISK_BANDS } from '@/lib/risk/config'
+import { BaggageTag, type TagVariant } from '@/components/ui/BaggageTag'
 
 export const metadata: Metadata = {
   title: 'Methodology — Bitcoin Quantum Exposure Scanner',
@@ -19,26 +19,58 @@ const TOC = [
   { id: 'data-sources', label: '7. Data Sources & Privacy' },
 ]
 
+const RECOMMENDED_ACTIONS: {
+  action: string
+  variant: TagVariant
+  desc: string
+}[] = [
+  {
+    action: 'MIGRATE_IMMEDIATELY',
+    variant: 'exposed',
+    desc: 'Move funds to a quantum-resistant address type (P2WPKH or P2TR key-path-only used once). The pubkey is on-chain and the balance is non-zero.',
+  },
+  {
+    action: 'MONITOR',
+    variant: 'error',
+    desc: 'The pubkey is exposed but the address currently holds zero balance. Set up alerts for any incoming transactions.',
+  },
+  {
+    action: 'NO_ACTION_NEEDED',
+    variant: 'safe',
+    desc: 'The pubkey has never been revealed. No quantum risk today; continue monitoring as CRQC timelines evolve.',
+  },
+  {
+    action: 'MANUAL_REVIEW',
+    variant: 'empty',
+    desc: 'Address type is ambiguous (complex P2SH script) or could not be resolved. Investigate manually.',
+  },
+]
+
+const SCENARIO_VARIANTS: TagVariant[] = ['empty', 'error', 'exposed']
+
 export default function MethodologyPage() {
   return (
     <main className="container mx-auto max-w-4xl px-4 py-12">
-      <h1 className="text-3xl font-bold tracking-tight">Methodology</h1>
-      <p className="mt-2 text-muted-foreground">
+      <h1 className="font-stamp text-6xl text-ink-dark">Methodology</h1>
+      <p className="font-form text-xs text-ink-faint mt-1 tracking-wider">
         Last updated: May 2026 · Based on the framework from{' '}
         <em>Ray, Gautam &amp; Ryan (2026)</em>
       </p>
 
       {/* Table of contents */}
-      <nav aria-label="Table of contents" className="my-8 rounded-lg border p-4">
-        <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+      <nav
+        aria-label="Table of contents"
+        className="my-8 rounded-xl border-2 border-tag-edge bg-manila p-5"
+      >
+        <p className="font-stamp text-xs tracking-[0.2em] text-ink-faint mb-3">
           Contents
         </p>
-        <ol className="space-y-1">
-          {TOC.map(item => (
+        <ol className="space-y-1.5">
+          {TOC.map((item) => (
             <li key={item.id}>
               <a
                 href={`#${item.id}`}
-                className="text-sm text-primary hover:underline"
+                className="font-form text-sm text-ink-mid hover:text-ink-dark underline transition-colors"
               >
                 {item.label}
               </a>
@@ -47,58 +79,75 @@ export default function MethodologyPage() {
         </ol>
       </nav>
 
-      <div className="prose prose-slate dark:prose-invert max-w-none space-y-12">
+      <div className="space-y-12">
         {/* 1 */}
         <section id="overview">
-          <h2 className="text-2xl font-bold">1. Overview</h2>
-          <p className="mt-4 text-muted-foreground leading-relaxed">
-            Bitcoin addresses rely on either elliptic-curve cryptography (ECDSA) or Schnorr
-            signatures to authorize spending. A sufficiently powerful quantum computer running
-            Shor&apos;s algorithm can derive the private key from a public key in polynomial
-            time. This scanner determines whether each address has revealed its public key
-            on-chain and, if so, how urgently funds should be migrated under three possible
-            CRQC arrival timelines.
+          <h2 className="font-stamp text-3xl text-ink-dark border-b-2 border-dashed border-tag-edge pb-1">
+            1. Overview
+          </h2>
+          <p className="font-form text-sm text-ink-mid mt-4 leading-relaxed">
+            Bitcoin addresses rely on either elliptic-curve cryptography (ECDSA)
+            or Schnorr signatures to authorize spending. A sufficiently powerful
+            quantum computer running Shor&apos;s algorithm can derive the
+            private key from a public key in polynomial time. This scanner
+            determines whether each address has revealed its public key on-chain
+            and, if so, how urgently funds should be migrated under three
+            possible CRQC arrival timelines.
           </p>
         </section>
 
         {/* 2 */}
         <section id="classification">
-          <h2 className="text-2xl font-bold">2. Address Classification</h2>
-          <p className="mt-4 text-muted-foreground leading-relaxed">
+          <h2 className="font-stamp text-3xl text-ink-dark border-b-2 border-dashed border-tag-edge pb-1">
+            2. Address Classification
+          </h2>
+          <p className="font-form text-sm text-ink-mid mt-4 leading-relaxed">
             We detect address type using the{' '}
-            <code className="rounded bg-muted px-1 py-0.5 text-sm font-mono">
+            <code className="font-form bg-manila rounded px-1.5 py-0.5 border border-tag-edge text-xs">
               bitcoin-address-validation
             </code>{' '}
             library, mapped to the following types:
           </p>
-          <div className="mt-4 overflow-x-auto rounded-lg border">
+          <div className="mt-4 overflow-x-auto rounded-xl border-2 border-tag-edge">
             <table className="w-full text-sm">
-              <thead className="bg-muted/50">
-                <tr>
-                  <th className="px-4 py-2 text-left font-semibold">Prefix / Pattern</th>
-                  <th className="px-4 py-2 text-left font-semibold">Type</th>
-                  <th className="px-4 py-2 text-left font-semibold">Pubkey exposed when spent?</th>
+              <thead className="bg-manila">
+                <tr className="perforation-b">
+                  <th className="font-stamp text-xs tracking-wider text-ink-faint px-4 py-2.5 text-left">
+                    Prefix / Pattern
+                  </th>
+                  <th className="font-stamp text-xs tracking-wider text-ink-faint px-4 py-2.5 text-left">
+                    Type
+                  </th>
+                  <th className="font-stamp text-xs tracking-wider text-ink-faint px-4 py-2.5 text-left">
+                    Pubkey exposed when spent?
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {[
                   ['1…', 'P2PKH', 'Yes — ECDSA signature reveals full public key'],
-                  ['3…', 'P2SH', 'Ambiguous — depends on redeem script (P2SH-P2WPKH exposes; multisig may not)'],
-                  ['bc1q… (20 byte)', 'P2WPKH', 'Yes — SegWit v0, pubkey revealed in witness'],
-                  ['bc1q… (32 byte)', 'P2WSH', 'Script-dependent; treated as ambiguous (P2SH_AMBIGUOUS note)'],
-                  ['bc1p…', 'P2TR', 'Key path spends expose the key; classified EXPOSED automatically'],
+                  ['3…', 'P2SH', 'Ambiguous — depends on redeem script'],
+                  ['bc1q… (20 byte)', 'P2WPKH', 'Yes — SegWit v0, pubkey in witness'],
+                  ['bc1q… (32 byte)', 'P2WSH', 'Script-dependent; treated as ambiguous'],
+                  ['bc1p…', 'P2TR', 'Key path spends expose the key; EXPOSED automatically'],
                   ['Pay-to-PubKey', 'P2PK', 'Always exposed — pubkey in scriptPubKey'],
                 ].map(([pattern, type, note]) => (
-                  <tr key={type} className="border-t">
-                    <td className="px-4 py-2 font-mono text-xs">{pattern}</td>
-                    <td className="px-4 py-2 font-semibold">{type}</td>
-                    <td className="px-4 py-2 text-muted-foreground">{note}</td>
+                  <tr key={type} className="border-t border-tag-edge/30 hover:bg-manila/60">
+                    <td className="font-form font-mono text-xs text-ink-dark px-4 py-2.5">
+                      {pattern}
+                    </td>
+                    <td className="font-stamp text-sm text-ink-dark px-4 py-2.5">
+                      {type}
+                    </td>
+                    <td className="font-form text-xs text-ink-mid px-4 py-2.5">
+                      {note}
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          <p className="mt-3 text-sm text-muted-foreground">
+          <p className="font-form text-xs text-ink-mid mt-3">
             Each address is then classified as <strong>SAFE_AT_REST</strong>,{' '}
             <strong>EXPOSED</strong>, <strong>EMPTY</strong>, or{' '}
             <strong>UNRESOLVABLE</strong> based on the logic in §3.
@@ -107,18 +156,26 @@ export default function MethodologyPage() {
 
         {/* 3 */}
         <section id="exposure">
-          <h2 className="text-2xl font-bold">3. Pubkey Exposure Logic</h2>
-          <p className="mt-4 text-muted-foreground leading-relaxed">
-            An address is classified <strong>EXPOSED</strong> when its public key is knowable
-            by an adversary. The truth table:
+          <h2 className="font-stamp text-3xl text-ink-dark border-b-2 border-dashed border-tag-edge pb-1">
+            3. Pubkey Exposure Logic
+          </h2>
+          <p className="font-form text-sm text-ink-mid mt-4 leading-relaxed">
+            An address is classified <strong>EXPOSED</strong> when its public
+            key is knowable by an adversary. The truth table:
           </p>
-          <div className="mt-4 overflow-x-auto rounded-lg border">
+          <div className="mt-4 overflow-x-auto rounded-xl border-2 border-tag-edge">
             <table className="w-full text-sm">
-              <thead className="bg-muted/50">
-                <tr>
-                  <th className="px-4 py-2 text-left font-semibold">Condition</th>
-                  <th className="px-4 py-2 text-left font-semibold">Classification</th>
-                  <th className="px-4 py-2 text-left font-semibold">Action</th>
+              <thead className="bg-manila">
+                <tr className="perforation-b">
+                  <th className="font-stamp text-xs tracking-wider text-ink-faint px-4 py-2.5 text-left">
+                    Condition
+                  </th>
+                  <th className="font-stamp text-xs tracking-wider text-ink-faint px-4 py-2.5 text-left">
+                    Classification
+                  </th>
+                  <th className="font-stamp text-xs tracking-wider text-ink-faint px-4 py-2.5 text-left">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -131,10 +188,12 @@ export default function MethodologyPage() {
                   ['UNKNOWN type', 'UNRESOLVABLE', 'MANUAL_REVIEW'],
                   ['txCount > 100 (any)', '+ HIGH_REUSE flag', 'Consider consolidation'],
                 ].map(([cond, cls, action]) => (
-                  <tr key={cond} className="border-t">
-                    <td className="px-4 py-2 text-muted-foreground">{cond}</td>
-                    <td className="px-4 py-2 font-semibold font-mono text-xs">{cls}</td>
-                    <td className="px-4 py-2">{action}</td>
+                  <tr key={cond} className="border-t border-tag-edge/30 hover:bg-manila/60">
+                    <td className="font-form text-xs text-ink-mid px-4 py-2.5">{cond}</td>
+                    <td className="font-form font-mono text-xs font-semibold text-ink-dark px-4 py-2.5">
+                      {cls}
+                    </td>
+                    <td className="font-form text-xs text-ink-mid px-4 py-2.5">{action}</td>
                   </tr>
                 ))}
               </tbody>
@@ -144,62 +203,91 @@ export default function MethodologyPage() {
 
         {/* 4 */}
         <section id="risk-formula">
-          <h2 className="text-2xl font-bold">4. Risk Score Formula</h2>
-          <p className="mt-4 text-muted-foreground leading-relaxed">
+          <h2 className="font-stamp text-3xl text-ink-dark border-b-2 border-dashed border-tag-edge pb-1">
+            4. Risk Score Formula
+          </h2>
+          <p className="font-form text-sm text-ink-mid mt-4 leading-relaxed">
             The risk score (0–100) for each CRQC scenario is computed as:
           </p>
-          <div className="my-4 rounded-lg border bg-muted/30 p-4 font-mono text-sm">
+          <div className="font-form font-mono text-xs bg-manila border-2 border-tag-edge my-4 rounded-xl p-4 text-ink-dark leading-relaxed">
             score = clamp(exposureRatio × 100 × weight × (1 / yearsToMid)^0.5, 0, 100)
           </div>
-          <p className="text-muted-foreground leading-relaxed">
-            Where:
-          </p>
-          <ul className="mt-2 space-y-1 text-sm text-muted-foreground list-disc list-inside">
-            <li><strong>exposureRatio</strong> = exposedBtc / totalBtc</li>
-            <li><strong>weight</strong> = scenario urgency weight (see §5)</li>
-            <li><strong>yearsToMid</strong> = max(1, scenarioMidYear − currentYear)</li>
-            <li>The square-root decay reflects diminishing marginal risk reduction as the threat recedes</li>
+          <p className="font-form text-xs text-ink-mid">Where:</p>
+          <ul className="font-form text-xs text-ink-mid mt-2 space-y-1.5 list-none">
+            <li className="flex gap-2">
+              <span aria-hidden className="text-ink-faint">·</span>
+              <span><strong className="text-ink-dark">exposureRatio</strong> = exposedBtc / totalBtc</span>
+            </li>
+            <li className="flex gap-2">
+              <span aria-hidden className="text-ink-faint">·</span>
+              <span><strong className="text-ink-dark">weight</strong> = scenario urgency weight (see §5)</span>
+            </li>
+            <li className="flex gap-2">
+              <span aria-hidden className="text-ink-faint">·</span>
+              <span><strong className="text-ink-dark">yearsToMid</strong> = max(1, scenarioMidYear − currentYear)</span>
+            </li>
+            <li className="flex gap-2">
+              <span aria-hidden className="text-ink-faint">·</span>
+              <span>Square-root decay reflects diminishing marginal risk reduction as the threat recedes</span>
+            </li>
           </ul>
-          <p className="mt-4 text-sm text-muted-foreground">
+          <p className="font-form text-xs text-ink-faint mt-4 tracking-wider">
             Risk bands: 0–24 LOW · 25–49 MODERATE · 50–74 HIGH · 75–100 CRITICAL
           </p>
         </section>
 
         {/* 5 */}
         <section id="scenarios">
-          <h2 className="text-2xl font-bold">5. CRQC Timeline Scenarios</h2>
-          <p className="mt-4 text-muted-foreground leading-relaxed">
-            We model three CRQC arrival scenarios derived from the GRI 2024 quantum threat
-            ranges as formalized in Ray, Gautam &amp; Ryan (2026). We make no claim of endorsement
-            by the paper&apos;s authors.
+          <h2 className="font-stamp text-3xl text-ink-dark border-b-2 border-dashed border-tag-edge pb-1">
+            5. CRQC Timeline Scenarios
+          </h2>
+          <p className="font-form text-sm text-ink-mid mt-4 leading-relaxed">
+            We model three CRQC arrival scenarios derived from the GRI 2024
+            quantum threat ranges as formalized in Ray, Gautam &amp; Ryan
+            (2026). We make no claim of endorsement by the paper&apos;s authors.
           </p>
-          <div className="mt-4 grid gap-3 sm:grid-cols-3">
-            {CRQC_SCENARIOS.map(s => (
-              <div key={s.id} className="rounded-lg border p-4">
-                <p className="font-semibold">{s.label}</p>
-                <p className="text-sm text-muted-foreground">{s.windowLabel}</p>
-                <p className="mt-2 text-xs text-muted-foreground">Mid-year: {s.crqcMidYear}</p>
-                <p className="text-xs text-muted-foreground">Weight: {s.weight}</p>
-              </div>
+          <div className="mt-6 grid gap-6 sm:grid-cols-3 justify-items-center">
+            {CRQC_SCENARIOS.map((s, i) => (
+              <BaggageTag
+                key={s.id}
+                variant={SCENARIO_VARIANTS[i]}
+                destination={s.label}
+                subLabel={s.windowLabel}
+                size="sm"
+                showString={false}
+                showHole={false}
+              >
+                <div className="font-form text-xs text-ink-mid space-y-1">
+                  <p>Mid-year: <strong className="text-ink-dark">{s.crqcMidYear}</strong></p>
+                  <p>Weight: <strong className="text-ink-dark">{s.weight}</strong></p>
+                </div>
+              </BaggageTag>
             ))}
           </div>
         </section>
 
         {/* 6 */}
         <section id="recommended-actions">
-          <h2 className="text-2xl font-bold">6. Recommended Actions</h2>
+          <h2 className="font-stamp text-3xl text-ink-dark border-b-2 border-dashed border-tag-edge pb-1">
+            6. Recommended Actions
+          </h2>
           <div className="mt-4 space-y-3">
-            {[
-              ['MIGRATE_IMMEDIATELY', 'red', 'Move funds to a quantum-resistant address type (P2WPKH or P2TR key-path-only used once). The pubkey is on-chain and the balance is non-zero.'],
-              ['MONITOR', 'amber', 'The pubkey is exposed but the address currently holds zero balance. Set up alerts for any incoming transactions.'],
-              ['NO_ACTION_NEEDED', 'emerald', 'The pubkey has never been revealed. No quantum risk today; continue monitoring as CRQC timelines evolve.'],
-              ['MANUAL_REVIEW', 'slate', 'Address type is ambiguous (complex P2SH script) or could not be resolved. Investigate manually.'],
-            ].map(([action, color, desc]) => (
-              <div key={action} className="rounded-lg border p-4">
-                <p className={`font-mono text-sm font-semibold text-${color}-600 dark:text-${color}-400`}>
+            {RECOMMENDED_ACTIONS.map(({ action, variant, desc }) => (
+              <div
+                key={action}
+                className="rounded-xl border-2 border-tag-edge bg-manila p-4"
+              >
+                <p className={`font-stamp text-sm tracking-wider ${
+                  variant === 'exposed' ? 'text-tag-exposed' :
+                  variant === 'error'   ? 'text-tag-error' :
+                  variant === 'safe'    ? 'text-tag-safe' :
+                                          'text-tag-empty'
+                }`}>
                   {action}
                 </p>
-                <p className="mt-1 text-sm text-muted-foreground">{desc}</p>
+                <p className="font-form text-xs text-ink-mid mt-1.5 leading-relaxed">
+                  {desc}
+                </p>
               </div>
             ))}
           </div>
@@ -207,24 +295,27 @@ export default function MethodologyPage() {
 
         {/* 7 */}
         <section id="data-sources">
-          <h2 className="text-2xl font-bold">7. Data Sources &amp; Privacy</h2>
-          <p className="mt-4 text-muted-foreground leading-relaxed">
-            On-chain data is fetched from{' '}
-            <strong>mempool.space</strong> (primary) with automatic fallback to{' '}
-            <strong>Blockstream Esplora</strong> on 429 or 5xx responses. BTC/USD price is
-            fetched from CoinGecko and cached in-process for 60 seconds.
+          <h2 className="font-stamp text-3xl text-ink-dark border-b-2 border-dashed border-tag-edge pb-1">
+            7. Data Sources &amp; Privacy
+          </h2>
+          <p className="font-form text-sm text-ink-mid mt-4 leading-relaxed">
+            On-chain data is fetched from <strong className="text-ink-dark">mempool.space</strong>{' '}
+            (primary) with automatic fallback to{' '}
+            <strong className="text-ink-dark">Blockstream Esplora</strong> on 429 or 5xx
+            responses. BTC/USD price is fetched from CoinGecko and cached
+            in-process for 60 seconds.
           </p>
-          <p className="mt-3 text-muted-foreground leading-relaxed">
-            <strong>Privacy:</strong> No addresses, results, or user identifiers are persisted.
-            The optional live counter stores only two aggregate integers
-            (<em>total_btc_scanned</em> and <em>exposed_btc_scanned</em>) in Vercel KV.
-            No personal data is transmitted or stored.
+          <p className="font-form text-sm text-ink-mid mt-3 leading-relaxed">
+            <strong className="text-ink-dark">Privacy:</strong> No addresses, results, or user
+            identifiers are persisted. The optional live counter stores only two
+            aggregate integers in Vercel KV. No personal data is transmitted or
+            stored.
           </p>
-          <p className="mt-3 text-muted-foreground leading-relaxed">
+          <p className="font-form text-sm text-ink-mid mt-3 leading-relaxed">
             The scanner is{' '}
             <a
               href="https://github.com/rahil1206/quantum-scanner"
-              className="text-primary hover:underline"
+              className="underline hover:text-ink-dark transition-colors"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -235,18 +326,19 @@ export default function MethodologyPage() {
         </section>
       </div>
 
-      <div className="mt-12 border-t pt-8 text-center">
-        <p className="text-muted-foreground">Ready to scan?</p>
+      {/* Bottom CTA */}
+      <div className="mt-12 perforation pt-8 text-center">
+        <p className="font-form text-ink-faint text-sm">Ready to scan?</p>
         <div className="mt-4 flex justify-center gap-3">
           <Link
             href="/scan"
-            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/80"
+            className="font-stamp text-sm tracking-wider bg-ink-dark text-parchment rounded-lg px-4 py-2 hover:bg-ink-mid transition-colors"
           >
             Scan an Address
           </Link>
           <Link
             href="/about"
-            className="rounded-lg border px-4 py-2 text-sm font-medium hover:bg-muted"
+            className="font-stamp text-sm tracking-wider border-2 border-tag-edge text-ink-mid rounded-lg px-4 py-2 hover:bg-manila transition-colors"
           >
             About this Project
           </Link>

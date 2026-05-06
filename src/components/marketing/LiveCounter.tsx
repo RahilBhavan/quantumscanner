@@ -11,18 +11,22 @@ export function LiveCounter({ counters }: LiveCounterProps) {
       : '0.0'
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 text-center">
-      <div className="rounded-xl border bg-card p-6">
-        <p className="text-4xl font-bold tabular-nums text-foreground">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="bg-manila border-2 border-tag-edge rounded-xl p-6 text-center shadow-tag">
+        <p className="font-stamp text-6xl leading-none text-ink-dark tabular-nums">
           {counters.totalScanned.toLocaleString()}
         </p>
-        <p className="mt-1 text-sm text-muted-foreground">Addresses scanned globally</p>
+        <p className="font-form text-xs text-ink-faint mt-2 tracking-[0.15em] uppercase">
+          Addresses scanned globally
+        </p>
       </div>
-      <div className="rounded-xl border bg-card p-6">
-        <p className="text-4xl font-bold tabular-nums text-red-500">
+      <div className="bg-tag-exposed-bg border-2 border-tag-exposed/40 rounded-xl p-6 text-center shadow-tag">
+        <p className="font-stamp text-6xl leading-none text-tag-exposed tabular-nums">
           {exposurePct}%
         </p>
-        <p className="mt-1 text-sm text-muted-foreground">Found quantum-exposed</p>
+        <p className="font-form text-xs text-ink-faint mt-2 tracking-[0.15em] uppercase">
+          Found quantum-exposed
+        </p>
       </div>
     </div>
   )
