@@ -6,7 +6,7 @@
 
 Scan any Bitcoin address or upload a portfolio CSV to get an instant quantum exposure risk assessment — identifying which addresses have exposed public keys and quantifying risk across three CRQC threat timelines.
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-quantum--scanner-black?style=for-the-badge&logo=vercel)](qs.rahilbhavan.com)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-qs.rahilbhavan.com-black?style=for-the-badge&logo=vercel)](https://qs.rahilbhavan.com)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)](https://nextjs.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
@@ -27,7 +27,7 @@ Quantum Scanner answers both questions.
 
 ## Demo
 
-> **Try it live:** [qs.rahilbhavan.com(qs.rahilbhavan.com)
+> **Try it live:** [qs.rahilbhavan.com](https://qs.rahilbhavan.com)
 
 **Single address scan:**
 
@@ -77,7 +77,7 @@ All endpoints return a consistent envelope: `{ ok, data, error }`.
 ### Scan a single address
 
 ```bash
-curl 'https://quantum-scanner.vercel.app/api/v1/address/1A1zP1eP5QGefi2DMPTfTL5SLmv7Divf'
+curl 'https://qs.rahilbhavan.com/api/v1/address/1A1zP1eP5QGefi2DMPTfTL5SLmv7Divf'
 ```
 
 ```json
@@ -103,7 +103,7 @@ curl 'https://quantum-scanner.vercel.app/api/v1/address/1A1zP1eP5QGefi2DMPTfTL5S
 ### Batch scan a portfolio
 
 ```bash
-curl -X POST 'https://quantum-scanner.vercel.app/api/v1/portfolio' \
+curl -X POST 'https://qs.rahilbhavan.com/api/v1/portfolio' \
   -H 'Content-Type: application/json' \
   -d '{"addresses": ["1A1zP1...", "bc1q..."]}'
 ```
@@ -123,7 +123,7 @@ Server-Sent Events stream — one JSON result per address as it resolves.
 ### Health check
 
 ```bash
-curl 'https://quantum-scanner.vercel.app/api/v1/health'
+curl 'https://qs.rahilbhavan.com/api/v1/health'
 ```
 
 Full API reference: [docs/API.md](docs/API.md)
@@ -197,7 +197,7 @@ COINGECKO_API_URL=https://api.coingecko.com/api/v3
 BULK_CONCURRENCY=6
 
 # Site configuration
-NEXT_PUBLIC_CANONICAL_URL=https://quantum-scanner.vercel.app
+NEXT_PUBLIC_CANONICAL_URL=https://qs.rahilbhavan.com
 ```
 
 Optional Vercel KV environment variables (`KV_URL`, `KV_REST_API_URL`, etc.) enable persistent rate limiting across serverless instances. Without them, the scanner falls back to an in-memory LRU cache that resets per instance.
