@@ -6,7 +6,7 @@
 
 Scan any Bitcoin address or upload a portfolio CSV to get an instant quantum exposure risk assessment — identifying which addresses have exposed public keys and quantifying risk across three CRQC threat timelines.
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-quantum--scanner.vercel.app-black?style=for-the-badge&logo=vercel)](https://quantum-scanner.vercel.app)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-quantum--scanner.vercel.app-black?style=for-the-badge&logo=vercel)](qs.rahilbhavan.com)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)](https://nextjs.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
