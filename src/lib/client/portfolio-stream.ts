@@ -148,8 +148,16 @@ export function streamPortfolioScan(opts: StreamOptions): () => void {
               const json = line.slice(5).trim()
               if (!json) continue
               try {
-                const parsed = JSON.parse(json) as StreamEvent
-                onEvent(parsed)
+                const parsed: unknown = JSON.parse(json)
+                // Guard: must be an object with a string `type` field.
+                if (
+                  parsed !== null &&
+                  typeof parsed === 'object' &&
+                  'type' in parsed &&
+                  typeof (parsed as Record<string, unknown>).type === 'string'
+                ) {
+                  onEvent(parsed as StreamEvent)
+                }
               } catch {
                 // skip malformed SSE data lines
               }

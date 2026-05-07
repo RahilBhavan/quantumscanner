@@ -67,10 +67,13 @@ export function ScanForm({ initialAddress }: ScanFormProps) {
     setState({ status: 'idle' })
   }
 
-  // Auto-submit when a pre-filled address arrives via URL param
+  // Auto-submit when a pre-filled address arrives via URL param.
+  // Deferred to a microtask so synchronous setState calls inside performScan
+  // don't fire within the effect body (avoids react-hooks/set-state-in-effect).
   useEffect(() => {
     const trimmed = initialAddress?.trim()
-    if (trimmed) performScan(trimmed)
+    if (!trimmed) return
+    void Promise.resolve().then(() => performScan(trimmed))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -120,7 +123,10 @@ export function ScanForm({ initialAddress }: ScanFormProps) {
       <div aria-live="polite" aria-atomic="true">
         {state.status === 'success' && (
           <div className="space-y-4">
-            <ResultCard result={state.result} />
+            <ResultCard
+              result={state.result}
+              onRetry={() => performScan(address.trim())}
+            />
             <div className="text-center">
               <button
                 onClick={handleReset}

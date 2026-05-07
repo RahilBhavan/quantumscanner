@@ -173,9 +173,10 @@ export async function checkRateLimit(
         resetAt,
         limit,
       }
-    } catch {
+    } catch (kvErr) {
       // KV unavailable (network error, cold start, misconfiguration) —
       // fall through to in-memory so the request is not incorrectly blocked.
+      console.error('[rate-limit] Vercel KV unavailable, falling back to in-memory:', kvErr)
     }
   }
 

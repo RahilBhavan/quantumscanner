@@ -72,7 +72,7 @@ export function computeRiskScore({
   // Proportion of the portfolio whose public key is on-chain (0–1).
   const exposureRatio = exposedBtc / totalBtc
 
-  const scores = CRQC_SCENARIOS.reduce(
+  const scores = CRQC_SCENARIOS.reduce<Record<string, number>>(
     (acc, scenario) => {
       // Clamp to at least 1 year so past-midpoint scenarios don't produce
       // division-by-zero or negative time values.
@@ -82,15 +82,14 @@ export function computeRiskScore({
         100 *
         scenario.weight *
         Math.pow(1 / yearsToMid, FORMULA_EXPONENT)
-      acc[scenario.id] = Math.min(100, Math.round(raw))
-      return acc
+      return { ...acc, [scenario.id]: Math.min(100, Math.round(raw)) }
     },
-    {} as Record<string, number>
+    {}
   )
 
   return {
-    conservative: scores.conservative,
-    base: scores.base,
-    aggressive: scores.aggressive,
+    conservative: scores['conservative'] ?? 0,
+    base: scores['base'] ?? 0,
+    aggressive: scores['aggressive'] ?? 0,
   }
 }

@@ -63,23 +63,23 @@ export default function RootLayout({
     >
       <body className="bg-parchment flex min-h-full flex-col">
         <header className="border-tag-edge bg-aged sticky top-0 z-40 border-b-2">
-          <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
+          <div className="mx-auto flex min-h-14 max-w-6xl flex-wrap items-center justify-between gap-y-1 px-4 py-2 sm:h-14 sm:flex-nowrap sm:py-0">
             <Link
               href="/"
               className="text-ink-dark hover:text-ink-mid flex items-center gap-2 transition-colors"
             >
-              <Tag className="h-5 w-5" />
-              <span className="font-stamp text-xl leading-none">
+              <Tag className="h-4 w-4 sm:h-5 sm:w-5" />
+              <span className="font-stamp text-lg leading-none sm:text-xl">
                 Quantum Scanner
               </span>
             </Link>
             <nav aria-label="Main navigation">
-              <ul className="flex items-center gap-0">
+              <ul className="flex flex-wrap items-center gap-0">
                 {NAV_LINKS.map((link, i) => (
                   <li key={link.href} className="flex items-center">
                     {i > 0 && (
                       <span
-                        className="text-ink-faint font-form px-1 text-sm select-none"
+                        className="text-ink-faint font-form px-0.5 text-xs select-none sm:px-1 sm:text-sm"
                         aria-hidden="true"
                       >
                         ·
@@ -87,7 +87,7 @@ export default function RootLayout({
                     )}
                     <Link
                       href={link.href}
-                      className="font-stamp text-ink-mid hover:text-ink-dark px-2 py-1 text-sm transition-colors"
+                      className="font-stamp text-ink-mid hover:text-ink-dark px-1.5 py-1 text-xs transition-colors sm:px-2 sm:text-sm"
                     >
                       {link.label}
                     </Link>

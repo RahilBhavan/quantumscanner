@@ -53,7 +53,7 @@ export const runtime = 'nodejs'
  *
  * @remarks
  * Addresses are resolved concurrently up to `BULK_CONCURRENCY` (env var,
- * default 5) using `p-limit` to avoid saturating upstream APIs. All addresses
+ * default 6) using `p-limit` to avoid saturating upstream APIs. All addresses
  * are format-validated before any network I/O; a single invalid address fails
  * the request immediately without consuming upstream quota.
  *
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
   const parsed = PortfolioBodySchema.safeParse(body)
   if (!parsed.success) {
     return NextResponse.json(
-      failure('INVALID_BODY', 'Invalid request body.', parsed.error.flatten()),
+      failure('INVALID_BODY', 'Invalid request body.', process.env.NODE_ENV !== 'production' ? parsed.error.flatten() : undefined),
       { status: 400, headers }
     )
   }

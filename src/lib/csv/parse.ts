@@ -112,7 +112,16 @@ function parseNoHeader(text: string): ParsedRow[] {
  * @throws {Error} Only if `FileReader.onerror` fires, which indicates an
  *                 OS-level failure to read the file.
  */
+const MAX_FILE_BYTES = 5 * 1024 * 1024
+
 export function parseCsv(file: File): Promise<ParseResult> {
+  if (file.size > MAX_FILE_BYTES) {
+    const mb = (file.size / (1024 * 1024)).toFixed(1)
+    return Promise.resolve({
+      rows: [],
+      errors: [`File too large (${mb} MB). Maximum allowed size is 5 MB.`],
+    })
+  }
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
     reader.onload = (e) => {

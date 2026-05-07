@@ -85,7 +85,7 @@ export default function AboutPage() {
               'shadcn/ui components · Recharts for portfolio charts',
               'Papa Parse for CSV handling · bitcoin-address-validation for type detection',
               'mempool.space primary API · Blockstream Esplora fallback',
-              'CoinGecko for BTC/USD price · Vercel KV for live counters',
+              'CoinGecko for BTC/USD price',
               'Vitest + Testing Library · Playwright E2E',
             ].map((item) => (
               <li key={item} className="flex gap-2">

@@ -1,6 +1,6 @@
 'use client'
 
-import { useReducer, useCallback } from 'react'
+import { useReducer, useCallback, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { CsvDropzone } from '@/components/portfolio/CsvDropzone'
 import { CsvPreviewTable } from '@/components/portfolio/CsvPreviewTable'
@@ -18,8 +18,7 @@ import { computeRiskScore } from '@/lib/risk/score'
 import type { ValidatedRow } from '@/lib/csv/validate'
 import type { AddressResult } from '@/lib/api/resolve-address'
 
-const SATS_PER_BTC = 100_000_000
-const MAX_SCAN_ADDRESSES = 500
+const MAX_SCAN_ADDRESSES = 1000
 
 /**
  * The four phases of the portfolio scan lifecycle, used as the discriminant
@@ -48,6 +47,7 @@ interface PortfolioState {
   validatedRows: ValidatedRow[]
   parseErrors: string[]
   scanResults: AddressResult[]
+  scanErrors: { address: string; error: string }[]
   progress: { completed: number; total: number }
   error: string | null
 }
@@ -74,6 +74,7 @@ type Action =
     }
   | { type: 'SCAN_START' }
   | { type: 'SCAN_RESULT'; result: AddressResult }
+  | { type: 'SCAN_RESULT_ERROR'; address: string; error: string }
   | { type: 'SCAN_PROGRESS'; completed: number; total: number }
   | { type: 'SCAN_DONE' }
   | { type: 'SCAN_ERROR'; message: string }
@@ -85,6 +86,7 @@ const INITIAL: PortfolioState = {
   validatedRows: [],
   parseErrors: [],
   scanResults: [],
+  scanErrors: [],
   progress: { completed: 0, total: 0 },
   error: null,
 }
@@ -99,6 +101,7 @@ function reducer(state: PortfolioState, action: Action): PortfolioState {
         parseErrors: action.errors,
         fileName: action.fileName,
         scanResults: [],
+        scanErrors: [],
         error: null,
       }
     case 'SCAN_START':
@@ -106,6 +109,7 @@ function reducer(state: PortfolioState, action: Action): PortfolioState {
         ...state,
         phase: 'scanning',
         scanResults: [],
+        scanErrors: [],
         progress: {
           completed: 0,
           total: state.validatedRows.filter((r) => r.isValid && !r.isDuplicate)
@@ -115,6 +119,14 @@ function reducer(state: PortfolioState, action: Action): PortfolioState {
       }
     case 'SCAN_RESULT':
       return { ...state, scanResults: [...state.scanResults, action.result] }
+    case 'SCAN_RESULT_ERROR':
+      return {
+        ...state,
+        scanErrors: [
+          ...state.scanErrors,
+          { address: action.address, error: action.error },
+        ],
+      }
     case 'SCAN_PROGRESS':
       return {
         ...state,
@@ -217,6 +229,20 @@ function computeSummary(results: AddressResult[]) {
  */
 export function PortfolioClient() {
   const [state, dispatch] = useReducer(reducer, INITIAL)
+  const cancelScanRef = useRef<(() => void) | null>(null)
+
+  // Cancel any in-flight scan on unmount.
+  useEffect(() => {
+    return () => {
+      cancelScanRef.current?.()
+    }
+  }, [])
+
+  function handleReset() {
+    cancelScanRef.current?.()
+    cancelScanRef.current = null
+    dispatch({ type: 'RESET' })
+  }
 
   async function handleFile(file: File) {
     const parseResult = await parseCsv(file)
@@ -240,22 +266,34 @@ export function PortfolioClient() {
     const cancel = streamPortfolioScan({
       addresses,
       onEvent: (event) => {
-        if (event.type === 'result')
-          dispatch({ type: 'SCAN_RESULT', result: event.data })
-        else if (event.type === 'progress')
+        if (event.type === 'result') {
+          // The server can send either a resolved AddressResult or an
+          // { address, error } failure — check before dispatching.
+          const data = event.data as AddressResult | { address: string; error: string }
+          if ('error' in data) {
+            dispatch({
+              type: 'SCAN_RESULT_ERROR',
+              address: data.address,
+              error: data.error,
+            })
+          } else {
+            dispatch({ type: 'SCAN_RESULT', result: data })
+          }
+        } else if (event.type === 'progress') {
           dispatch({
             type: 'SCAN_PROGRESS',
             completed: event.completed,
             total: event.total,
           })
-        else if (event.type === 'error')
+        } else if (event.type === 'error') {
           dispatch({ type: 'SCAN_ERROR', message: event.message })
+        }
       },
       onDone: () => dispatch({ type: 'SCAN_DONE' }),
       onError: (err) => dispatch({ type: 'SCAN_ERROR', message: err.message }),
     })
 
-    return cancel
+    cancelScanRef.current = cancel
   }, [state.validatedRows])
 
   const {
@@ -263,6 +301,7 @@ export function PortfolioClient() {
     validatedRows,
     parseErrors,
     scanResults,
+    scanErrors,
     progress,
     error,
     fileName,
@@ -305,7 +344,7 @@ export function PortfolioClient() {
                 <>
                   <Button
                     variant="outline"
-                    onClick={() => dispatch({ type: 'RESET' })}
+                    onClick={handleReset}
                   >
                     Change file
                   </Button>
@@ -317,7 +356,7 @@ export function PortfolioClient() {
               {phase === 'results' && (
                 <Button
                   variant="outline"
-                  onClick={() => dispatch({ type: 'RESET' })}
+                  onClick={handleReset}
                 >
                   Start over
                 </Button>
@@ -348,6 +387,25 @@ export function PortfolioClient() {
               className="font-form border-stamp-red/40 bg-tag-exposed-bg text-tag-exposed rounded-lg border-2 p-4 text-sm"
             >
               Scan encountered an error: {error}
+            </div>
+          )}
+          {scanErrors.length > 0 && (
+            <div
+              role="status"
+              className="font-form border-tag-edge bg-manila rounded-lg border-2 p-4 text-sm"
+            >
+              <p className="text-ink-dark font-semibold">
+                {scanErrors.length}{' '}
+                {scanErrors.length === 1 ? 'address' : 'addresses'} could not
+                be resolved
+              </p>
+              <ul className="text-ink-mid mt-2 space-y-0.5 text-xs">
+                {scanErrors.map(({ address, error: errMsg }) => (
+                  <li key={address} className="truncate">
+                    <span className="font-mono">{address}</span> — {errMsg}
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
           <SummaryBar

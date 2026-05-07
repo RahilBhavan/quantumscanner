@@ -10,6 +10,8 @@ import { UnresolvableCard } from './UnresolvableCard'
 interface Props {
   /** The resolved scan result whose classification drives component selection. */
   result: AddressResult
+  /** Called when the user requests a retry (e.g. after UNRESOLVABLE). */
+  onRetry?: () => void
 }
 
 /**
@@ -28,7 +30,7 @@ interface Props {
  * | EMPTY           | {@link EmptyCard}        |
  * | UNRESOLVABLE    | {@link UnresolvableCard} |
  */
-export function ResultCard({ result }: Props) {
+export function ResultCard({ result, onRetry }: Props) {
   switch (result.classification) {
     case 'SAFE_AT_REST':
       return <SafeAtRestCard result={result} />
@@ -40,7 +42,7 @@ export function ResultCard({ result }: Props) {
       return (
         <UnresolvableCard
           address={result.address}
-          onRetry={() => window.location.reload()}
+          onRetry={onRetry ?? (() => {})}
         />
       )
     default:

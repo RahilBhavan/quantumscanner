@@ -72,7 +72,7 @@ export async function fetchAddressWithFallback(
       return await fetchAddressFacts(address, esploraBase, 'blockstream.info')
     } catch (fallbackErr) {
       throw new UpstreamError(
-        `Both providers failed for ${address}. Primary: ${primaryErr}. Fallback: ${fallbackErr}`
+        `Both providers failed. Primary: ${primaryErr}. Fallback: ${fallbackErr}`
       )
     }
   }

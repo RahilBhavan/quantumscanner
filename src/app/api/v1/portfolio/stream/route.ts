@@ -61,7 +61,7 @@ function sseEvent(event: string, data: unknown): string {
  *
  * @remarks
  * Addresses are resolved concurrently up to `BULK_CONCURRENCY` (env var,
- * default 5). Invalid addresses are detected before any upstream I/O and
+ * default 6). Invalid addresses are detected before any upstream I/O and
  * emitted as inline errors rather than killing the stream.
  *
  * Rate-limit headers (`X-RateLimit-Limit`, `X-RateLimit-Remaining`,
@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
   const parsed = PortfolioStreamBodySchema.safeParse(body)
   if (!parsed.success) {
     return NextResponse.json(
-      failure('INVALID_BODY', 'Invalid request body.', parsed.error.flatten()),
+      failure('INVALID_BODY', 'Invalid request body.', process.env.NODE_ENV !== 'production' ? parsed.error.flatten() : undefined),
       { status: 400, headers: rlHeaders }
     )
   }

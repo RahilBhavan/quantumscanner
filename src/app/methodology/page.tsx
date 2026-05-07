@@ -420,9 +420,8 @@ export default function MethodologyPage() {
           </p>
           <p className="font-form text-ink-mid mt-3 text-sm leading-relaxed">
             <strong className="text-ink-dark">Privacy:</strong> No addresses,
-            results, or user identifiers are persisted. The optional live
-            counter stores only two aggregate integers in Vercel KV. No personal
-            data is transmitted or stored.
+            results, or user identifiers are persisted. No personal data is
+            transmitted or stored.
           </p>
           <p className="font-form text-ink-mid mt-3 text-sm leading-relaxed">
             The scanner is{' '}

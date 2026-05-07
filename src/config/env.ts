@@ -34,6 +34,24 @@ const envSchema = z.object({
 // listing every invalid variable if validation fails.
 const _env = envSchema.parse(process.env)
 
+// In production, enforce an allowlist of expected hostnames for outbound API URLs
+// to prevent SSRF if an env var is misconfigured or tampered with.
+if (process.env.NODE_ENV === 'production') {
+  const allowlist: [string, string[]][] = [
+    [_env.MEMPOOL_API_URL, ['mempool.space']],
+    [_env.ESPLORA_API_URL, ['blockstream.info']],
+    [_env.COINGECKO_API_URL, ['api.coingecko.com', 'pro-api.coingecko.com']],
+  ]
+  for (const [urlStr, allowed] of allowlist) {
+    const { hostname } = new URL(urlStr)
+    if (!allowed.includes(hostname)) {
+      throw new Error(
+        `[config] Blocked outbound API URL with unexpected hostname "${hostname}". Allowed: ${allowed.join(', ')}`
+      )
+    }
+  }
+}
+
 // Warn in production when the canonical URL was not explicitly configured.
 // A localhost URL in production breaks Open Graph previews and sitemap indexing.
 if (
